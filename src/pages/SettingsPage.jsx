@@ -61,8 +61,17 @@ const SettingsPage = () => {
       setLoading(true);
       setError('');
 
+      // ✅ FIX: Use clientId from user or fallback to localStorage
+      const clientId = user?.clientId || localStorage.getItem('clientId');
+      
+      if (!clientId) {
+        setError('No client information found. Please login again.');
+        setLoading(false);
+        return;
+      }
+
       const response = await axiosInstance.get(
-        `${API_BASE_URL}/api/clients/${user.clientId}`
+        `${API_BASE_URL}/api/clients/${clientId}`
       );
 
       if (response.data && response.data.settings) {
@@ -106,8 +115,17 @@ const SettingsPage = () => {
     setSaving(true);
 
     try {
+      // ✅ FIX: Use clientId from user or fallback to localStorage
+      const clientId = user?.clientId || localStorage.getItem('clientId');
+      
+      if (!clientId) {
+        setError('No client information found. Please login again.');
+        setSaving(false);
+        return;
+      }
+
       const response = await axiosInstance.put(
-        `${API_BASE_URL}/api/clients/${user.clientId}`,
+        `${API_BASE_URL}/api/clients/${clientId}`,
         formData
       );
 

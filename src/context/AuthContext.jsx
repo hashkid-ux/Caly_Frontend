@@ -175,8 +175,11 @@ export const AuthProvider = ({ children }) => {
         logger.debug('✅ [Auth] Profile fetched successfully:', {
           userId: data.user.id,
           email: data.user.email,
+          clientId: data.user.clientId,
         });
         setUser(data.user);
+        // ✅ FIX: Also save clientId to localStorage for easy access
+        localStorage.setItem('clientId', data.user.clientId);
         localStorage.setItem('user', JSON.stringify(data.user));
         setError(null);
       } else if (response.status === 401) {
@@ -186,6 +189,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
         localStorage.removeItem('tokenData');
+        localStorage.removeItem('clientId');
+        localStorage.removeItem('userId');
         setToken(null);
         setUser(null);
         setError('Session expired. Please login again.');

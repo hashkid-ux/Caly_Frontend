@@ -73,14 +73,18 @@ const OAuthCallbackPage = () => {
           logger.debug('✅ [OAuth] Access token decoded:', {
             userId: decoded.userId,
             email: decoded.email,
-            client_id: decoded.client_id,
+            clientId: decoded.clientId,
             expiresIn: decoded.exp - Math.floor(Date.now() / 1000) + 's',
           });
 
+          // ✅ FIX: Save clientId separately so it can be accessed by name
+          localStorage.setItem('userId', decoded.userId);
+          localStorage.setItem('clientId', decoded.clientId);  // ✅ CRITICAL: Save as separate key
+          
           localStorage.setItem('tokenData', JSON.stringify({
             userId: decoded.userId,
             email: decoded.email,
-            client_id: decoded.client_id,
+            clientId: decoded.clientId,
             expiresAt: decoded.exp * 1000, // Convert to milliseconds
           }));
         } catch (decodeError) {
