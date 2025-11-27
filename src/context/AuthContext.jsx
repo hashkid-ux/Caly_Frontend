@@ -359,6 +359,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
       localStorage.removeItem('tokenData');
+      localStorage.removeItem('clientId');
+      localStorage.removeItem('userId');
       setUser(null);
       setToken(null);
       setError(null);
