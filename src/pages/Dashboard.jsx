@@ -3,6 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance';
+import Sidebar from '../components/Sidebar';
+import Breadcrumb from '../components/Breadcrumb';
+import PageHeader from '../components/PageHeader';
+import UserMenu from '../components/UserMenu';
 import {
   Phone, TrendingUp, DollarSign, Clock, LogOut, Settings, Menu, X,
   BarChart3, Users, AlertCircle, CheckCircle, RefreshCw
@@ -108,41 +112,25 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-900 text-white transition-all duration-300 flex flex-col`}>
-        <div className="p-6 flex items-center justify-between">
-          {sidebarOpen && <h1 className="text-2xl font-bold">Caly</h1>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-800 rounded">
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-
-        <nav className="flex-1 px-4 space-y-4">
-          <NavItem icon={BarChart3} label="Dashboard" active onClick={() => navigate('/dashboard')} sidebarOpen={sidebarOpen} />
-          <NavItem icon={Phone} label="Call History" onClick={() => navigate('/call-history')} sidebarOpen={sidebarOpen} />
-          <NavItem icon={TrendingUp} label="Analytics" onClick={() => navigate('/analytics')} sidebarOpen={sidebarOpen} />
-          <NavItem icon={Users} label="Team" onClick={() => navigate('/team')} sidebarOpen={sidebarOpen} />
-        </nav>
-
-        <div className="p-4 border-t border-gray-700 space-y-2">
-          <NavItem icon={Settings} label="Settings" onClick={() => navigate('/settings')} sidebarOpen={sidebarOpen} />
-          <NavItem icon={LogOut} label="Logout" onClick={handleLogout} sidebarOpen={sidebarOpen} />
-        </div>
-      </div>
+      {/* Sidebar Component */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        onLogout={handleLogout}
+      />
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        {/* Header */}
-        <div className="bg-white shadow p-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
-            <p className="text-gray-600 mt-1">Welcome back, {user?.firstName || user?.email}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-600">{user?.companyName}</p>
-            <p className="text-sm text-gray-500 mt-1">Last updated: {new Date().toLocaleTimeString()}</p>
-          </div>
-        </div>
+      <div className={`${sidebarOpen ? 'ml-64' : 'ml-20'} flex-1 overflow-auto transition-all duration-300`}>
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb />
+
+        {/* Page Header with User Menu */}
+        <PageHeader 
+          title="Dashboard"
+          subtitle={`Welcome back, ${user?.firstName || user?.email}`}
+          showBackButton={false}
+          actions={<UserMenu />}
+        />
 
         {/* Error Alert */}
         {error && (
@@ -246,19 +234,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
-const NavItem = ({ icon: Icon, label, active, onClick, sidebarOpen }) => (
-  <button
-    onClick={onClick}
-    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
-      active
-        ? 'bg-blue-600 text-white'
-        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-    }`}
-  >
-    <Icon className="w-5 h-5 flex-shrink-0" />
-    {sidebarOpen && <span className="text-sm">{label}</span>}
-  </button>
-);
 
 export default Dashboard;

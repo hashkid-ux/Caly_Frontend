@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import PageHeader from '../components/PageHeader';
+import Breadcrumb from '../components/Breadcrumb';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -87,30 +89,25 @@ const AnalyticsPage = () => {
   const chartData = analytics?.hourlyData || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow sticky top-0 z-10">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <TrendingUp className="w-8 h-8 text-blue-600" />
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Analytics & Insights</h1>
-                <p className="text-gray-600 mt-1">Comprehensive performance metrics and KPIs</p>
-              </div>
-            </div>
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="7d">Last 7 Days</option>
-              <option value="30d">Last 30 Days</option>
-              <option value="90d">Last 90 Days</option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <>
+      <Breadcrumb />
+      <PageHeader 
+        title="Analytics & Insights" 
+        subtitle="Comprehensive performance metrics and KPIs"
+        showBackButton={false}
+        actions={
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="90d">Last 90 Days</option>
+          </select>
+        }
+      />
+      <div className="bg-gray-50">
 
       {/* Error Alert */}
       {error && (
@@ -274,9 +271,9 @@ const AnalyticsPage = () => {
               </table>
             </div>
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

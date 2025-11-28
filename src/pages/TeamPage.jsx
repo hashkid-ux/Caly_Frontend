@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import PageHeader from '../components/PageHeader';
+import Breadcrumb from '../components/Breadcrumb';
 import { Users, Zap, AlertCircle, Loader, CheckCircle, TrendingUp } from 'lucide-react';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';

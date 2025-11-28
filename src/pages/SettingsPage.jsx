@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import PageHeader from '../components/PageHeader';
+import Breadcrumb from '../components/Breadcrumb';
 import {
   Settings, Save, AlertCircle, CheckCircle, Loader,
   Globe, Phone, Users, Lock, Key, Bell

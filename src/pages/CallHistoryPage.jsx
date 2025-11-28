@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import PageHeader from '../components/PageHeader';
+import Breadcrumb from '../components/Breadcrumb';
 import { Phone, Search, Filter, Clock, User, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
@@ -99,55 +101,49 @@ const CallHistoryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        {/* Header */}
-        <div className="bg-white shadow sticky top-0 z-10">
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Phone className="w-8 h-8 text-blue-600" />
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Call History</h1>
-                <p className="text-gray-600 mt-1">View and manage all customer calls</p>
+    <>
+      <Breadcrumb />
+      <PageHeader 
+        title="Call History" 
+        subtitle="View and manage all customer calls"
+        showBackButton={false}
+      />
+      <div className="bg-gray-50 overflow-auto">
+        {/* Filters and Search */}
+        <div className="bg-white shadow p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Search */}
+            <div className="md:col-span-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search by phone number..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
             </div>
 
-            {/* Filters and Search */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Search */}
-              <div className="md:col-span-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search by phone number..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Status Filter */}
-              <div className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-gray-400" />
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="active">Active</option>
-                  <option value="resolved">Resolved</option>
-                </select>
-              </div>
+            {/* Status Filter */}
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-gray-400" />
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="resolved">Resolved</option>
+              </select>
             </div>
+          </div>
 
-            {/* Results Count */}
-            <div className="mt-4 text-sm text-gray-600">
-              Showing <strong>{filteredCalls.length}</strong> of <strong>{calls.length}</strong> calls
-            </div>
+          {/* Results Count */}
+          <div className="mt-4 text-sm text-gray-600">
+            Showing <strong>{filteredCalls.length}</strong> of <strong>{calls.length}</strong> calls
           </div>
         </div>
 
@@ -230,8 +226,8 @@ const CallHistoryPage = () => {
 
       {/* Call Details Panel */}
       {selectedCall && (
-        <div className="w-80 bg-white border-l border-gray-200 shadow-lg overflow-auto">
-          <div className="p-6 sticky top-0 bg-gradient-to-b from-white to-gray-50">
+        <div className="fixed right-0 top-0 w-80 h-screen bg-white border-l border-gray-200 shadow-lg overflow-auto z-50">
+          <div className="p-6 sticky top-0 bg-gradient-to-b from-white to-gray-50 border-b">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900">Call Details</h2>
               <button
@@ -283,7 +279,7 @@ const CallHistoryPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
