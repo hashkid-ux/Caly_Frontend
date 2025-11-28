@@ -15,7 +15,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
-  const { user, getAuthHeader } = useAuth();
+  const { user, getAuthHeader, setOnboardingCompletedStatus } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -202,6 +202,9 @@ const OnboardingPage = () => {
         setError(data.error || data.errors?.shopifyApiKey || 'Setup failed');
         return;
       }
+
+      // ✅ NEW: Mark onboarding as completed in AuthContext
+      setOnboardingCompletedStatus(true);
 
       // Redirect to dashboard
       navigate('/dashboard');

@@ -86,8 +86,34 @@ const LoginPage = () => {
       // Store user info
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // Redirect to dashboard
-      navigate('/dashboard');
+      // ✅ NEW: Check onboarding status before redirecting
+      try {
+        const onboardingResponse = await fetch(`${API_BASE_URL}/api/onboarding/status`, {
+          headers: { 'Authorization': `Bearer ${data.accessToken}` }
+        });
+
+        if (onboardingResponse.ok) {
+          const onboardingData = await onboardingResponse.json();
+          const completed = !!onboardingData.onboarding_completed_at;
+          
+          if (completed) {
+            // Onboarding done, go to dashboard
+            localStorage.setItem('onboardingCompleted', 'true');
+            navigate('/dashboard');
+          } else {
+            // Onboarding not done, go to onboarding
+            localStorage.setItem('onboardingCompleted', 'false');
+            navigate('/onboarding');
+          }
+        } else {
+          // If onboarding check fails, default to onboarding
+          navigate('/onboarding');
+        }
+      } catch (err) {
+        // If onboarding check fails, default to onboarding as safe fallback
+        logger.warn('Failed to check onboarding status:', err);
+        navigate('/onboarding');
+      }
 
     } catch (error) {
       clearTimeout(timeoutId);

@@ -157,10 +157,19 @@ const RegisterPage = () => {
         return;
       }
 
-      // Redirect to login
-      navigate('/login', { 
-        state: { message: 'Email verified! Please log in with your credentials.' }
-      });
+      // ✅ NEW: Save tokens and user data if provided, then redirect to onboarding
+      if (data.token) {
+        localStorage.setItem('accessToken', data.token);
+      }
+      if (data.refreshToken) {
+        localStorage.setItem('refreshToken', data.refreshToken);
+      }
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+
+      // Redirect to onboarding instead of login
+      navigate('/onboarding');
 
     } catch (error) {
       setError('Connection error. Please try again.');

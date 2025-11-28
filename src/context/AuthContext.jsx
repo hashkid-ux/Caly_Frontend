@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
 
   // Initialize from localStorage on app load
   useEffect(() => {
@@ -182,6 +183,24 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('clientId', data.user.clientId);
         localStorage.setItem('user', JSON.stringify(data.user));
         setError(null);
+
+        // ✅ NEW: Fetch onboarding status after profile is loaded
+        try {
+          const onboardingResponse = await fetch(`${API_BASE_URL}/api/onboarding/status`, {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
+          
+          if (onboardingResponse.ok) {
+            const onboardingData = await onboardingResponse.json();
+            const completed = !!onboardingData.onboarding_completed_at;
+            setOnboardingCompleted(completed);
+            localStorage.setItem('onboardingCompleted', JSON.stringify(completed));
+            logger.debug('✅ [Auth] Onboarding status:', { completed });
+          }
+        } catch (onboardingErr) {
+          logger.warn('⚠️  [Auth] Failed to fetch onboarding status:', onboardingErr);
+          setOnboardingCompleted(false);
+        }
       } else if (response.status === 401) {
         // Token invalid or expired
         logger.warn('⚠️  [Auth] Token expired or invalid');
@@ -191,8 +210,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('tokenData');
         localStorage.removeItem('clientId');
         localStorage.removeItem('userId');
+        localStorage.removeItem('onboardingCompleted');
         setToken(null);
         setUser(null);
+        setOnboardingCompleted(false);
         setError('Session expired. Please login again.');
       } else {
         throw new Error(`Failed to fetch profile: ${response.status}`);
@@ -361,10 +382,21 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('tokenData');
       localStorage.removeItem('clientId');
       localStorage.removeItem('userId');
+      localStorage.removeItem('onboardingCompleted');
       setUser(null);
       setToken(null);
+      setOnboardingCompleted(false);
       setError(null);
       logger.debug('✅ [Auth] Logged out');
+    }
+  }, []);
+
+  // ✅ NEW: Set onboarding as completed
+  const setOnboardingCompletedStatus = useCallback((completed) => {
+    setOnboardingCompleted(completed);
+    localStorage.setItem('onboardingCompleted', JSON.stringify(completed));
+    if (completed) {
+      localStorage.setItem('onboarding_completed_at', new Date().toISOString());
     }
   }, []);
 
@@ -399,6 +431,7 @@ export const AuthProvider = ({ children }) => {
     error,
     token,
     isRefreshing,
+    onboardingCompleted,
     isAuthenticated: isAuthenticated(),
     login,
     register,
@@ -408,7 +441,8 @@ export const AuthProvider = ({ children }) => {
     getAuthHeader,
     verifyToken,
     fetchUserProfile,
-    fetchWithTokenRefresh
+    fetchWithTokenRefresh,
+    setOnboardingCompletedStatus
   };
 
   return (

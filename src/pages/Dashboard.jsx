@@ -118,10 +118,10 @@ const Dashboard = () => {
         </div>
 
         <nav className="flex-1 px-4 space-y-4">
-          <NavItem icon={BarChart3} label="Dashboard" active sidebarOpen={sidebarOpen} />
-          <NavItem icon={Phone} label="Call History" sidebarOpen={sidebarOpen} />
-          <NavItem icon={TrendingUp} label="Analytics" sidebarOpen={sidebarOpen} />
-          <NavItem icon={Users} label="Team" sidebarOpen={sidebarOpen} />
+          <NavItem icon={BarChart3} label="Dashboard" active onClick={() => navigate('/dashboard')} sidebarOpen={sidebarOpen} />
+          <NavItem icon={Phone} label="Call History" onClick={() => navigate('/call-history')} sidebarOpen={sidebarOpen} />
+          <NavItem icon={TrendingUp} label="Analytics" onClick={() => navigate('/analytics')} sidebarOpen={sidebarOpen} />
+          <NavItem icon={Users} label="Team" onClick={() => navigate('/team')} sidebarOpen={sidebarOpen} />
         </nav>
 
         <div className="p-4 border-t border-gray-700 space-y-2">

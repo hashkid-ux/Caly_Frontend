@@ -17,6 +17,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Loader, AlertCircle } from 'lucide-react';
 import logger from '../utils/logger'; // ✅ PHASE 2 FIX 5: Environment-aware logging
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+
 const OAuthCallbackPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -96,12 +98,37 @@ const OAuthCallbackPage = () => {
         // Step 3: Wait a moment to ensure localStorage is synced
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        // Step 4: Redirect to dashboard
-        // AuthContext useEffect will now find the tokens in localStorage
-        // and fetch the full user profile
-        // ✅ PHASE 2 FIX 5: Use environment-aware logger
-        logger.debug('✅ [OAuth] Redirecting to dashboard');
-        navigate('/dashboard', { replace: true });
+        // Step 4: ✅ NEW: Check onboarding status before redirecting
+        try {
+          const onboardingResponse = await fetch(`${API_BASE_URL}/api/onboarding/status`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+          });
+
+          if (onboardingResponse.ok) {
+            const onboardingData = await onboardingResponse.json();
+            const completed = !!onboardingData.onboarding_completed_at;
+            
+            if (completed) {
+              // Onboarding done, go to dashboard
+              localStorage.setItem('onboardingCompleted', 'true');
+              logger.debug('✅ [OAuth] Onboarding completed, redirecting to dashboard');
+              navigate('/dashboard', { replace: true });
+            } else {
+              // Onboarding not done, go to onboarding
+              localStorage.setItem('onboardingCompleted', 'false');
+              logger.debug('✅ [OAuth] Onboarding not completed, redirecting to onboarding');
+              navigate('/onboarding', { replace: true });
+            }
+          } else {
+            // If onboarding check fails, default to onboarding
+            logger.warn('⚠️  Onboarding status check failed, defaulting to onboarding');
+            navigate('/onboarding', { replace: true });
+          }
+        } catch (onboardingErr) {
+          // If onboarding check fails, default to onboarding as safe fallback
+          logger.warn('⚠️  Failed to check onboarding status:', onboardingErr);
+          navigate('/onboarding', { replace: true });
+        }
 
       } catch (err) {
         // ✅ PHASE 2 FIX 5: Use environment-aware logger
