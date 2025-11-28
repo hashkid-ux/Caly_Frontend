@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
-import Breadcrumb from '../components/Breadcrumb';
+import MobileNavigation from '../components/MobileNavigation';
 import { Phone, Search, Filter, Clock, User, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
@@ -106,7 +106,6 @@ const CallHistoryPage = () => {
 
   return (
     <>
-      <Breadcrumb />
       <PageHeader 
         title={t('callHistory.title')} 
         subtitle={t('callHistory.subtitle')}

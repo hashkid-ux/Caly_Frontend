@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
-import Breadcrumb from '../components/Breadcrumb';
+import MobileNavigation from '../components/MobileNavigation';
 import { Users, Zap, AlertCircle, Loader, CheckCircle, TrendingUp } from 'lucide-react';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';

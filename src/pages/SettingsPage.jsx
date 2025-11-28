@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
-import Breadcrumb from '../components/Breadcrumb';
 import {
   Settings, Save, AlertCircle, CheckCircle, Loader,
   Globe, Phone, Users, Lock, Key, Bell

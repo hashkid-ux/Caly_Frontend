@@ -1,0 +1,275 @@
+/* Frontend/src/styles/animations.css - Global animations and micro-interactions */
+
+/* Fade in animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale animations */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Success checkmark animation */
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 66;
+  }
+  65% {
+    stroke-dashoffset: -4;
+  }
+  100% {
+    stroke-dashoffset: -66;
+  }
+}
+
+@keyframes successCircle {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Bounce animations */
+@keyframes bounce-sm {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Spin animation (for loading) */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulse animations */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* Shimmer animation (for skeletons) */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Hover lift effect */
+@keyframes hoverLift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2px);
+  }
+}
+
+/* Utility animations */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-in-out;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.4s ease-in-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-in-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-in-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-in-out;
+}
+
+.animate-bounce-sm {
+  animation: bounce-sm 0.6s infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+.animate-success-circle {
+  animation: successCircle 0.6s ease-in-out;
+}
+
+/* Button interactions */
+.btn-interactive {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.btn-interactive:hover:not(:disabled) {
+  @apply translate-y-[-2px];
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.btn-interactive:active:not(:disabled) {
+  @apply translate-y-[-1px];
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card hover effects */
+.card-interactive {
+  @apply transition-all duration-300 ease-in-out cursor-pointer;
+}
+
+.card-interactive:hover {
+  @apply translate-y-[-4px];
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Input focus effects */
+.input-interactive {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.input-interactive:focus {
+  @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* Toast notifications */
+.toast-enter {
+  animation: slideInRight 0.3s ease-in-out;
+}
+
+.toast-exit {
+  animation: slideInRight 0.3s ease-in-out reverse;
+}
+
+/* Modal animations */
+.modal-overlay-enter {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content-enter {
+  animation: scaleIn 0.3s ease-in-out;
+}
+
+/* Dropdown/Menu animations */
+.dropdown-enter {
+  animation: fadeInUp 0.2s ease-in-out;
+}
+
+.dropdown-exit {
+  animation: fadeInUp 0.2s ease-in-out reverse;
+}
+
+/* Success states */
+.success-state {
+  @apply bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700;
+}
+
+.success-state-text {
+  @apply text-green-700 dark:text-green-300;
+}
+
+/* Loading states */
+.loading-state {
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
+
+/* Disabled states with smoother transition */
+.disabled-interactive {
+  @apply transition-opacity duration-200 opacity-50 cursor-not-allowed;
+}

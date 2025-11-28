@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
-import Breadcrumb from '../components/Breadcrumb';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -94,7 +93,6 @@ const AnalyticsPage = () => {
 
   return (
     <>
-      <Breadcrumb />
       <PageHeader 
         title={t('analytics.title')}
         subtitle={t('analytics.subtitle')}
@@ -278,6 +276,8 @@ const AnalyticsPage = () => {
         )}
       </div>
       </div>
+      {/* Mobile Navigation */}
+      <MobileNavigation />
     </>
   );
 };
