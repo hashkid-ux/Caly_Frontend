@@ -1,6 +1,8 @@
 // Frontend/src/pages/Dashboard.jsx - Main admin dashboard
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useI18n } from '../context/I18nContext';
+import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance';
 import Sidebar from '../components/Sidebar';
@@ -15,6 +17,8 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const { t } = useI18n();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -81,11 +85,11 @@ const Dashboard = () => {
   };
 
   const StatCard = ({ icon: Icon, label, value, change, bgColor }) => (
-    <div className="bg-white rounded-lg shadow p-6 border-l-4" style={{ borderLeftColor: bgColor }}>
+    <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-6 border-l-4`} style={{ borderLeftColor: bgColor }}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-gray-600 text-sm">{label}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
+          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{label}</p>
+          <p className={`text-2xl font-bold mt-2 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{value}</p>
           {change && (
             <p className={`text-sm mt-2 ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
               {change > 0 ? '↑' : '↓'} {Math.abs(change)}% vs yesterday
@@ -101,17 +105,17 @@ const Dashboard = () => {
 
   if (loading && !stats) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
           <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mx-auto" />
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+          <p className={`mt-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('dashboard.loadingDashboard')}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} flex`}>
       {/* Sidebar Component */}
       <Sidebar 
         isOpen={sidebarOpen} 
@@ -126,23 +130,23 @@ const Dashboard = () => {
 
         {/* Page Header with User Menu */}
         <PageHeader 
-          title="Dashboard"
-          subtitle={`Welcome back, ${user?.firstName || user?.email}`}
+          title={t('dashboard.title')}
+          subtitle={`${t('dashboard.welcome')}, ${user?.firstName || user?.email}`}
           showBackButton={false}
           actions={<UserMenu />}
         />
 
         {/* Mobile Header (hidden on desktop) */}
-        <div className="md:hidden bg-white border-b p-4">
-          <h2 className="text-xl font-bold text-gray-900">Dashboard</h2>
-          <p className="text-gray-600 text-sm">Welcome back</p>
+        <div className={`md:hidden ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} border-b p-4`}>
+          <h2 className={`text-xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{t('dashboard.title')}</h2>
+          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('dashboard.welcome')}</p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="m-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <span className="text-red-800 text-sm">{error}</span>
+          <div className={`m-6 p-4 ${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border rounded-lg flex items-start gap-3`}>
+            <AlertCircle className={`w-5 h-5 ${isDark ? 'text-red-400' : 'text-red-600'} flex-shrink-0 mt-0.5`} />
+            <span className={`text-sm ${isDark ? 'text-red-300' : 'text-red-800'}`}>{error}</span>
           </div>
         )}
 
@@ -150,28 +154,28 @@ const Dashboard = () => {
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             icon={Phone}
-            label="Today's Calls"
+            label={t('dashboard.todaysCalls')}
             value={stats?.kpis?.total_calls || 0}
             change={12}
             bgColor="#3B82F6"
           />
           <StatCard
             icon={CheckCircle}
-            label="Automation Rate"
+            label={t('dashboard.automationRate')}
             value={`${stats?.kpis?.automation_rate || 0}%`}
             change={5}
             bgColor="#10B981"
           />
           <StatCard
             icon={DollarSign}
-            label="Revenue (Est.)"
+            label={t('dashboard.revenue')}
             value={`₹${((stats?.kpis?.total_calls || 0) * 30).toLocaleString()}`}
             change={8}
             bgColor="#F59E0B"
           />
           <StatCard
             icon={Clock}
-            label="Avg Duration"
+            label={t('dashboard.avgDuration')}
             value={`${stats?.kpis?.avg_handling_time || 0}s`}
             change={-3}
             bgColor="#8B5CF6"
@@ -181,38 +185,38 @@ const Dashboard = () => {
         {/* Charts */}
         <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Call Volume Chart */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Call Volume (7 Days)</h3>
+          <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-6`}>
+            <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'} mb-4`}>{t('dashboard.callVolume7Days')}</h3>
             {dailyData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={dailyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} />
+                  <XAxis dataKey="time" stroke={isDark ? '#9ca3af' : '#6b7280'} />
+                  <YAxis stroke={isDark ? '#9ca3af' : '#6b7280'} />
+                  <Tooltip contentStyle={{ backgroundColor: isDark ? '#1f2937' : '#ffffff', borderColor: isDark ? '#374151' : '#e5e7eb' }} />
                   <Line type="monotone" dataKey="calls" stroke="#3B82F6" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-gray-500 text-center py-20">No data available</p>
+              <p className={`${isDark ? 'text-gray-500' : 'text-gray-500'} text-center py-20`}>{t('dashboard.noDataAvailable')}</p>
             )}
           </div>
 
           {/* Revenue Chart */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue (7 Days)</h3>
+          <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-6`}>
+            <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'} mb-4`}>{t('dashboard.revenueDistribution')}</h3>
             {revenueData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#e5e7eb'} />
+                  <XAxis dataKey="time" stroke={isDark ? '#9ca3af' : '#6b7280'} />
+                  <YAxis stroke={isDark ? '#9ca3af' : '#6b7280'} />
+                  <Tooltip contentStyle={{ backgroundColor: isDark ? '#1f2937' : '#ffffff', borderColor: isDark ? '#374151' : '#e5e7eb' }} />
                   <Bar dataKey="revenue" fill="#10B981" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-gray-500 text-center py-20">No data available</p>
+              <p className={`${isDark ? 'text-gray-500' : 'text-gray-500'} text-center py-20`}>{t('dashboard.noDataAvailable')}</p>
             )}
           </div>
         </div>

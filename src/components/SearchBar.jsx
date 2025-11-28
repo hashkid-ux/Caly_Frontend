@@ -20,18 +20,18 @@ const SearchBar = ({
     <div className="w-full space-y-3">
       {/* Search Input */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 pointer-events-none" />
         <input
           type="text"
           placeholder={placeholder}
           value={value}
           onChange={(e) => onSearch(e.target.value)}
-          className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
         />
         {value && (
           <button
             onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
           >
             <X className="w-5 h-5" />
           </button>
@@ -43,7 +43,7 @@ const SearchBar = ({
         <div className="relative">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="w-full md:w-auto flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="w-full md:w-auto flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-300 transition-colors"
           >
             <Filter className="w-4 h-4" />
             <span className="text-sm font-medium">Filters</span>
@@ -51,10 +51,10 @@ const SearchBar = ({
           </button>
 
           {isOpen && (
-            <div className="absolute top-full mt-2 right-0 md:right-auto bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-10 min-w-max">
+            <div className="absolute top-full mt-2 right-0 md:right-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-10 min-w-max">
               {filters.map((filter) => (
                 <div key={filter.key} className="mb-4 last:mb-0">
-                  <label className="text-sm font-medium text-gray-700 block mb-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-2">
                     {filter.label}
                   </label>
                   {filter.type === 'select' && (

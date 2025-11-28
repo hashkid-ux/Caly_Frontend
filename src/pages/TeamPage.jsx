@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useI18n } from '../context/I18nContext';
+import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
 import Breadcrumb from '../components/Breadcrumb';
 import { Users, Zap, AlertCircle, Loader, CheckCircle, TrendingUp } from 'lucide-react';
@@ -17,6 +19,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
  */
 const TeamPage = () => {
   const { getAuthHeader } = useAuth();
+  const { t } = useI18n();
+  const { isDark } = useTheme();
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -107,10 +111,10 @@ const TeamPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className={`flex items-center justify-center min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
           <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading team data...</p>
+          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Loading team data...</p>
         </div>
       </div>
     );
@@ -124,15 +128,15 @@ const TeamPage = () => {
       : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className="bg-white shadow sticky top-0 z-10">
+      <div className={`${isDark ? 'bg-gray-800 shadow-lg' : 'bg-white shadow'} sticky top-0 z-10`}>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-6">
             <Users className="w-8 h-8 text-blue-600" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">AI Agents</h1>
-              <p className="text-gray-600 mt-1">Manage and monitor your AI agent team</p>
+              <h1 className={`text-3xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>AI Agents</h1>
+              <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Manage and monitor your AI agent team</p>
             </div>
           </div>
 
@@ -148,19 +152,19 @@ const TeamPage = () => {
 
       {/* Error Alert */}
       {error && (
-        <div className="m-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-          <span className="text-red-800 text-sm">{error}</span>
+        <div className={`m-6 p-4 ${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border rounded-lg flex items-start gap-3`}>
+          <AlertCircle className={`w-5 h-5 ${isDark ? 'text-red-400' : 'text-red-600'} flex-shrink-0 mt-0.5`} />
+          <span className={`text-sm ${isDark ? 'text-red-300' : 'text-red-800'}`}>{error}</span>
         </div>
       )}
 
       {/* Agents Grid */}
       <div className="p-6">
         {agents.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No agents found</h3>
-            <p className="text-gray-600">Configure your AI agents in settings</p>
+          <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-12 text-center`}>
+            <Users className={`w-12 h-12 ${isDark ? 'text-gray-600' : 'text-gray-400'} mx-auto mb-4`} />
+            <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'} mb-2`}>No agents found</h3>
+            <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Configure your AI agents in settings</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -172,26 +176,26 @@ const TeamPage = () => {
 
         {/* Detailed Table View */}
         {agents.length > 0 && (
-          <div className="mt-8 bg-white rounded-lg shadow overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900">Performance Details</h2>
+          <div className={`mt-8 ${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow overflow-hidden`}>
+            <div className={`p-6 ${isDark ? 'border-gray-700' : 'border-gray-200'} border-b`}>
+              <h2 className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Performance Details</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className={`${isDark ? 'bg-gray-700' : 'bg-gray-50'} ${isDark ? 'border-gray-700' : 'border-gray-200'} border-b`}>
                   <tr>
-                    <th className="text-left py-3 px-6 font-semibold text-gray-900">Agent Name</th>
-                    <th className="text-right py-3 px-6 font-semibold text-gray-900">Calls Handled</th>
-                    <th className="text-right py-3 px-6 font-semibold text-gray-900">Success Rate</th>
-                    <th className="text-right py-3 px-6 font-semibold text-gray-900">Avg Duration</th>
-                    <th className="text-center py-3 px-6 font-semibold text-gray-900">Status</th>
+                    <th className={`text-left py-3 px-6 font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Agent Name</th>
+                    <th className={`text-right py-3 px-6 font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Calls Handled</th>
+                    <th className={`text-right py-3 px-6 font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Success Rate</th>
+                    <th className={`text-right py-3 px-6 font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Avg Duration</th>
+                    <th className={`text-center py-3 px-6 font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {agents.map((agent, idx) => (
-                    <tr key={agent.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="py-4 px-6 text-gray-900 font-medium">{agent.name}</td>
-                      <td className="py-4 px-6 text-right text-gray-600">
+                    <tr key={agent.id} className={`${isDark ? (idx % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700') : (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50')}`}>
+                      <td className={`py-4 px-6 font-medium ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{agent.name}</td>
+                      <td className={`py-4 px-6 text-right ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                         {(agent.callsHandled || 0).toLocaleString()}
                       </td>
                       <td className="py-4 px-6 text-right">

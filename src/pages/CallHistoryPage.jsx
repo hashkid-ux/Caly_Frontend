@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useI18n } from '../context/I18nContext';
+import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
 import Breadcrumb from '../components/Breadcrumb';
 import { Phone, Search, Filter, Clock, User, CheckCircle, AlertCircle, Loader } from 'lucide-react';
@@ -19,6 +21,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
  */
 const CallHistoryPage = () => {
   const { user, getAuthHeader } = useAuth();
+  const { t } = useI18n();
+  const { isDark } = useTheme();
   const [calls, setCalls] = useState([]);
   const [filteredCalls, setFilteredCalls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,10 +95,10 @@ const CallHistoryPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className={`flex items-center justify-center min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
           <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading calls...</p>
+          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('callHistory.loadingCalls')}</p>
         </div>
       </div>
     );
@@ -104,64 +108,64 @@ const CallHistoryPage = () => {
     <>
       <Breadcrumb />
       <PageHeader 
-        title="Call History" 
-        subtitle="View and manage all customer calls"
+        title={t('callHistory.title')} 
+        subtitle={t('callHistory.subtitle')}
         showBackButton={false}
       />
-      <div className="bg-gray-50 overflow-auto">
+      <div className={isDark ? 'bg-gray-900 overflow-auto' : 'bg-gray-50 overflow-auto'}>
         {/* Filters and Search */}
-        <div className="bg-white shadow p-6">
+        <div className={isDark ? 'bg-gray-800 shadow p-6' : 'bg-white shadow p-6'}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="md:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
                 <input
                   type="text"
-                  placeholder="Search by phone number..."
+                  placeholder={t('callHistory.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
                 />
               </div>
             </div>
 
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-400" />
+              <Filter className={`w-5 h-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
               >
-                <option value="all">All Statuses</option>
-                <option value="active">Active</option>
-                <option value="resolved">Resolved</option>
+                <option value="all">{t('callHistory.all')}</option>
+                <option value="active">{t('callHistory.active')}</option>
+                <option value="resolved">{t('callHistory.resolved')}</option>
               </select>
             </div>
           </div>
 
           {/* Results Count */}
-          <div className="mt-4 text-sm text-gray-600">
-            Showing <strong>{filteredCalls.length}</strong> of <strong>{calls.length}</strong> calls
+          <div className={`mt-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            {t('common.showing')}<strong>{filteredCalls.length}</strong> {t('common.of')} <strong>{calls.length}</strong> {t('callHistory.title')}
           </div>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="m-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <span className="text-red-800 text-sm">{error}</span>
+          <div className={`m-6 p-4 ${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border rounded-lg flex items-start gap-3`}>
+            <AlertCircle className={`w-5 h-5 ${isDark ? 'text-red-400' : 'text-red-600'} flex-shrink-0 mt-0.5`} />
+            <span className={`text-sm ${isDark ? 'text-red-300' : 'text-red-800'}`}>{error}</span>
           </div>
         )}
 
         {/* Calls List */}
         <div className="p-6 space-y-4">
           {filteredCalls.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
-              <Phone className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No calls found</h3>
-              <p className="text-gray-600">
+            <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-12 text-center`}>
+              <Phone className={`w-12 h-12 ${isDark ? 'text-gray-600' : 'text-gray-400'} mx-auto mb-4`} />
+              <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'} mb-2`}>{t('callHistory.noCallsFound')}</h3>
+              <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                 {searchTerm || filterStatus !== 'all'
                   ? 'Try adjusting your filters or search term'
                   : 'No calls have been recorded yet'}
@@ -172,19 +176,19 @@ const CallHistoryPage = () => {
               <div
                 key={call.id}
                 onClick={() => setSelectedCall(call)}
-                className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-4 cursor-pointer border-l-4 border-blue-500"
+                className={`${isDark ? 'bg-gray-800 border-blue-600 hover:shadow-md' : 'bg-white hover:shadow-md'} rounded-lg shadow transition-shadow p-4 cursor-pointer border-l-4`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <Phone className="w-5 h-5 text-blue-600" />
-                      <span className="font-semibold text-gray-900">{call.phone_from || 'Unknown'}</span>
-                      <span className="text-gray-400">→</span>
-                      <span className="text-gray-600">{call.phone_to || 'N/A'}</span>
+                      <span className={`font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{call.phone_from || 'Unknown'}</span>
+                      <span className={isDark ? 'text-gray-600' : 'text-gray-400'}>→</span>
+                      <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>{call.phone_to || 'N/A'}</span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm">
                       <div>
-                        <p className="text-gray-500">Status</p>
+                        <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>Status</p>
                         <div className="flex items-center gap-1 mt-1">
                           {call.resolved ? (
                             <>
@@ -200,8 +204,8 @@ const CallHistoryPage = () => {
                         </div>
                       </div>
                       <div>
-                        <p className="text-gray-500">Duration</p>
-                        <p className="font-medium text-gray-900 mt-1">
+                        <p className={isDark ? 'text-gray-400' : 'text-gray-500'}>Duration</p>
+                        <p className={`font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mt-1`}>
                           {formatDuration(call.duration_seconds)}
                         </p>
                       </div>

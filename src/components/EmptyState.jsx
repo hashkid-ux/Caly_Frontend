@@ -10,22 +10,22 @@ const EmptyState = ({
 }) => {
   const variants = {
     default: {
-      bgColor: 'bg-gray-50',
-      iconColor: 'text-gray-400',
-      titleColor: 'text-gray-900',
-      descColor: 'text-gray-600',
+      bgColor: 'bg-gray-50 dark:bg-gray-800',
+      iconColor: 'text-gray-400 dark:text-gray-600',
+      titleColor: 'text-gray-900 dark:text-gray-100',
+      descColor: 'text-gray-600 dark:text-gray-400',
     },
     empty: {
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-400',
-      titleColor: 'text-blue-900',
-      descColor: 'text-blue-700',
+      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+      iconColor: 'text-blue-400 dark:text-blue-500',
+      titleColor: 'text-blue-900 dark:text-blue-200',
+      descColor: 'text-blue-700 dark:text-blue-300',
     },
     error: {
-      bgColor: 'bg-red-50',
-      iconColor: 'text-red-400',
-      titleColor: 'text-red-900',
-      descColor: 'text-red-700',
+      bgColor: 'bg-red-50 dark:bg-red-900/20',
+      iconColor: 'text-red-400 dark:text-red-500',
+      titleColor: 'text-red-900 dark:text-red-200',
+      descColor: 'text-red-700 dark:text-red-300',
     },
   };
 

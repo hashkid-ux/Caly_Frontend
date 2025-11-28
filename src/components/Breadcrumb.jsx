@@ -52,16 +52,16 @@ const Breadcrumb = () => {
   }
 
   return (
-    <nav className="flex items-center space-x-1 text-sm text-gray-600 px-4 py-2 bg-white border-b">
+    <nav className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400 px-4 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       {breadcrumbs.map((crumb, index) => (
         <div key={crumb.path} className="flex items-center">
-          {index > 0 && <ChevronRight className="w-4 h-4 mx-1 text-gray-400" />}
+          {index > 0 && <ChevronRight className="w-4 h-4 mx-1 text-gray-400 dark:text-gray-500" />}
           {index === breadcrumbs.length - 1 ? (
-            <span className="text-gray-900 font-medium">{crumb.label}</span>
+            <span className="text-gray-900 dark:text-gray-100 font-medium">{crumb.label}</span>
           ) : (
             <Link
               to={crumb.path}
-              className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline transition-colors"
             >
               {crumb.label}
             </Link>

@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useI18n } from '../context/I18nContext';
+import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
 import Breadcrumb from '../components/Breadcrumb';
 import {
@@ -19,6 +21,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const SettingsPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
+  const { isDark } = useTheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -169,7 +173,7 @@ const SettingsPage = () => {
       className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium ${
         activeTab === id
           ? 'border-blue-600 text-blue-600'
-          : 'border-transparent text-gray-600 hover:text-gray-900'
+          : `${isDark ? 'border-transparent text-gray-400 hover:text-gray-300' : 'border-transparent text-gray-600 hover:text-gray-900'}`
       }`}
     >
       <Icon className="w-4 h-4" />
@@ -185,17 +189,17 @@ const SettingsPage = () => {
     return (
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">
-          <span className={hasError ? 'text-red-700' : 'text-gray-700'}>
+          <span className={hasError ? 'text-red-700' : isDark ? 'text-gray-300' : 'text-gray-700'}>
             {label}
           </span>
-          <span className="text-xs text-gray-500 ml-2">
+          <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'} ml-2`}>
             {required ? '(Required)' : '(Optional)'}
           </span>
         </label>
         <div className="relative">
           {Icon && (
             <Icon className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${
-              hasError ? 'text-red-400' : isValid ? 'text-green-500' : 'text-gray-400'
+              hasError ? 'text-red-400' : isValid ? 'text-green-500' : isDark ? 'text-gray-600' : 'text-gray-400'
             }`} />
           )}
           <input
@@ -210,8 +214,8 @@ const SettingsPage = () => {
                 ? 'border-red-500 bg-red-50 focus:ring-red-500' 
                 : isValid 
                 ? 'border-green-500 bg-green-50 focus:ring-green-500'
-                : 'border-gray-300 focus:ring-blue-500'
-            } focus:outline-none focus:ring-2 disabled:bg-gray-100`}
+                : `${isDark ? 'bg-gray-700 border-gray-600 text-gray-200 focus:ring-blue-500' : 'border-gray-300 focus:ring-blue-500'}`
+            } focus:outline-none focus:ring-2 ${isDark ? 'disabled:bg-gray-600' : 'disabled:bg-gray-100'}`}
           />
           <CheckCircle className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-500 transition-opacity ${isValid ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
         </div>
@@ -221,7 +225,7 @@ const SettingsPage = () => {
             <span>{validationErrors[field]}</span>
           </p>
         )}
-        {helper && !hasError && <p className="text-gray-500 text-xs mt-1">{helper}</p>}
+        {helper && !hasError && <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{helper}</p>}
       </div>
     );
   };
@@ -238,33 +242,33 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className="bg-white shadow">
+      <div className={isDark ? 'bg-gray-800 shadow' : 'bg-white shadow'}>
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-sm text-gray-600 mt-1">Manage your company configuration and integrations</p>
+          <h1 className={`text-2xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{t('settings.title')}</h1>
+          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-1`}>{t('settings.subtitle')}</p>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Alerts */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <span className="text-red-800 text-sm">{error}</span>
+          <div className={`mb-6 p-4 ${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border rounded-lg flex items-start gap-3`}>
+            <AlertCircle className={`w-5 h-5 ${isDark ? 'text-red-400' : 'text-red-600'} flex-shrink-0 mt-0.5`} />
+            <span className={`text-sm ${isDark ? 'text-red-300' : 'text-red-800'}`}>{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <span className="text-green-800 text-sm">{success}</span>
+          <div className={`mb-6 p-4 ${isDark ? 'bg-green-900/20 border-green-800' : 'bg-green-50 border-green-200'} border rounded-lg flex items-start gap-3`}>
+            <CheckCircle className={`w-5 h-5 ${isDark ? 'text-green-400' : 'text-green-600'} flex-shrink-0 mt-0.5`} />
+            <span className={`text-sm ${isDark ? 'text-green-300' : 'text-green-800'}`}>{success}</span>
           </div>
         )}
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow mb-6 border-b">
+        <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow mb-6 ${isDark ? 'border-b border-gray-700' : 'border-b'}`}>
           <div className="flex overflow-x-auto">
             <Tab id="company" label="Company Info" icon={Users} />
             <Tab id="integrations" label="Integrations" icon={Globe} />
@@ -274,32 +278,32 @@ const SettingsPage = () => {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow p-6`}>
           {/* Company Info Tab */}
           {activeTab === 'company' && (
             <div>
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Company Information</h2>
+              <h2 className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'} mb-4`}>Company Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                     Company Name
                   </label>
                   <input
                     type="text"
                     value={user?.companyName || ''}
                     disabled
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
+                    className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-600'} border`}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                     Admin Email
                   </label>
                   <input
                     type="email"
                     value={user?.email || ''}
                     disabled
-                    className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
+                    className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700 border-gray-600 text-gray-400' : 'bg-gray-100 border-gray-300 text-gray-600'} border`}
                   />
                 </div>
 

@@ -31,25 +31,25 @@ const Pagination = ({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
       {/* Items Per Page Selector */}
       <div className="flex items-center gap-2">
-        <label htmlFor="items-per-page" className="text-sm text-gray-600">
+        <label htmlFor="items-per-page" className="text-sm text-gray-600 dark:text-gray-400">
           Show
         </label>
         <select
           id="items-per-page"
           value={itemsPerPage}
           onChange={(e) => onItemsPerPageChange(parseInt(e.target.value))}
-          className="px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+          className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-gray-100"
         >
           <option value={10}>10</option>
           <option value={25}>25</option>
           <option value={50}>50</option>
           <option value={100}>100</option>
         </select>
-        <span className="text-sm text-gray-600">per page</span>
+        <span className="text-sm text-gray-600 dark:text-gray-400">per page</span>
       </div>
 
       {/* Results Info */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-gray-600 dark:text-gray-400">
         Showing <span className="font-medium">{startItem}</span> to{' '}
         <span className="font-medium">{endItem}</span> of{' '}
         <span className="font-medium">{totalItems}</span> results
@@ -61,7 +61,7 @@ const Pagination = ({
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors dark:bg-gray-800 dark:text-gray-300"
           title="Previous page"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -72,12 +72,12 @@ const Pagination = ({
           <>
             <button
               onClick={() => onPageChange(1)}
-              className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors dark:bg-gray-800 dark:text-gray-300"
             >
               1
             </button>
             {startPage > 2 && (
-              <span className="px-2 text-gray-400">...</span>
+              <span className="px-2 text-gray-400 dark:text-gray-600">...</span>
             )}
           </>
         )}
@@ -89,8 +89,8 @@ const Pagination = ({
             onClick={() => onPageChange(pageNum)}
             className={`px-3 py-1 text-sm border rounded-lg transition-colors ${
               currentPage === pageNum
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'border-gray-300 hover:bg-gray-50'
+                ? 'bg-blue-600 text-white border-blue-600 dark:bg-blue-700 dark:border-blue-700'
+                : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-300'
             }`}
           >
             {pageNum}
@@ -101,11 +101,11 @@ const Pagination = ({
         {endPage < totalPages && (
           <>
             {endPage < totalPages - 1 && (
-              <span className="px-2 text-gray-400">...</span>
+              <span className="px-2 text-gray-400 dark:text-gray-600">...</span>
             )}
             <button
               onClick={() => onPageChange(totalPages)}
-              className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors dark:bg-gray-800 dark:text-gray-300"
             >
               {totalPages}
             </button>
@@ -116,7 +116,7 @@ const Pagination = ({
         <button
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors dark:bg-gray-800 dark:text-gray-300"
           title="Next page"
         >
           <ChevronRight className="w-4 h-4" />

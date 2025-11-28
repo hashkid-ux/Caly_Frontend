@@ -17,27 +17,27 @@ const Accordion = ({ items = [], defaultOpen = false, multiple = false }) => {
   };
 
   return (
-    <div className="space-y-2 border border-gray-200 rounded-lg overflow-hidden">
+    <div className="space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
       {items.map((item, index) => {
         const isOpen = openItems.includes(index);
         return (
-          <div key={index} className="border-b last:border-b-0">
+          <div key={index} className="border-b dark:border-gray-700 last:border-b-0">
             <button
               onClick={() => toggleItem(index)}
-              className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors text-left"
+              className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
             >
-              <span className="font-medium text-gray-900">{item.title}</span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">{item.title}</span>
               <ChevronDown
-                className={`w-5 h-5 text-gray-600 transition-transform ${
+                className={`w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform ${
                   isOpen ? 'rotate-180' : ''
                 }`}
               />
             </button>
 
             {isOpen && (
-              <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700">
                 {typeof item.content === 'string' ? (
-                  <p className="text-gray-700">{item.content}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{item.content}</p>
                 ) : (
                   item.content
                 )}

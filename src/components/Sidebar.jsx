@@ -23,13 +23,13 @@ const Sidebar = ({ isOpen, onToggle, onLogout }) => {
   };
 
   return (
-    <div className={`${isOpen ? 'w-64' : 'w-20'} hidden md:flex bg-gray-900 text-white transition-all duration-300 flex-col h-screen fixed left-0 top-0 z-40`}>
+    <div className={`${isOpen ? 'w-64' : 'w-20'} hidden md:flex bg-gray-900 dark:bg-gray-950 text-white transition-all duration-300 flex-col h-screen fixed left-0 top-0 z-40`}>
       {/* Logo Section */}
-      <div className="p-6 flex items-center justify-between border-b border-gray-800">
+      <div className="p-6 flex items-center justify-between border-b border-gray-800 dark:border-gray-800">
         {isOpen && <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Caly</h1>}
         <button 
           onClick={onToggle}
-          className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-800 dark:hover:bg-gray-800 rounded-lg transition-colors"
           aria-label="Toggle sidebar"
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -48,7 +48,7 @@ const Sidebar = ({ isOpen, onToggle, onLogout }) => {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 active
                   ? 'bg-blue-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  : 'text-gray-400 dark:text-gray-400 hover:bg-gray-800 dark:hover:bg-gray-800 hover:text-white'
               }`}
               title={!isOpen ? item.label : undefined}
             >

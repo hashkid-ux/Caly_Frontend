@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, AlertCircle, Loader, Chrome } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import logger from '../utils/logger'; // ✅ PHASE 2 FIX 5: Environment-aware logging
 
 if (!process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production') {
@@ -13,6 +14,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const LoginPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isDark } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
