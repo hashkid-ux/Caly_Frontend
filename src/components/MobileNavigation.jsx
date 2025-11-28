@@ -1,12 +1,12 @@
 import React, { memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useTheme } from '../context/I18nContext';
+import { useTheme } from '../context/ThemeContext';
 import { BarChart3, Phone, TrendingUp, Users } from 'lucide-react';
 
 const MobileNavigation = memo(({ onMenuOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDark } = useTheme?.() ? useTheme() : { isDark: false };
+  const { isDark } = useTheme();
 
   const menuItems = [
     { icon: BarChart3, label: 'Dashboard', path: '/dashboard' },
