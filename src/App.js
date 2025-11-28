@@ -31,71 +31,73 @@ function App() {
             <Route path="/callback" element={<OAuthCallbackPage />} />
             <Route path="/404" element={<NotFoundPage />} />
 
-            {/* Protected Routes - Auth Required */}
-            {/* OnboardingGuard enforces mandatory onboarding for new users */}
-            <OnboardingGuard>
-              <Routes>
-                {/* Onboarding Route - No guard so users can always access/edit */}
-                <Route
-                  path="/onboarding"
-                  element={
-                    <ProtectedRoute>
-                      <OnboardingPage />
-                    </ProtectedRoute>
-                  }
-                />
+            {/* Onboarding Route - No guard so users can always access/edit */}
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute>
+                  <OnboardingPage />
+                </ProtectedRoute>
+              }
+            />
 
-                {/* Main Dashboard Routes - Guarded by OnboardingGuard */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/call-history"
-                  element={
-                    <ProtectedRoute>
-                      <CallHistoryPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/analytics"
-                  element={
-                    <ProtectedRoute>
-                      <AnalyticsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/team"
-                  element={
-                    <ProtectedRoute>
-                      <TeamPage />
-                    </ProtectedRoute>
-                  }
-                />
+            {/* Main Dashboard Routes - Guarded by OnboardingGuard for mandatory onboarding */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <OnboardingGuard>
+                    <Dashboard />
+                  </OnboardingGuard>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/call-history"
+              element={
+                <ProtectedRoute>
+                  <OnboardingGuard>
+                    <CallHistoryPage />
+                  </OnboardingGuard>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute>
+                  <OnboardingGuard>
+                    <AnalyticsPage />
+                  </OnboardingGuard>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team"
+              element={
+                <ProtectedRoute>
+                  <OnboardingGuard>
+                    <TeamPage />
+                  </OnboardingGuard>
+                </ProtectedRoute>
+              }
+            />
 
-                {/* Settings Route - Special exception in OnboardingGuard */}
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <SettingsPage />
-                    </ProtectedRoute>
-                  }
-                />
+            {/* Settings Route - Special exception in OnboardingGuard */}
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
+                </ProtectedRoute>
+              }
+            />
 
-                {/* Root redirect */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            {/* Root redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                {/* Catch-all 404 */}
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </OnboardingGuard>
+            {/* Catch-all 404 */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </AuthProvider>
       </Router>
