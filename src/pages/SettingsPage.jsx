@@ -211,9 +211,7 @@ const SettingsPage = () => {
                 : 'border-gray-300 focus:ring-blue-500'
             } focus:outline-none focus:ring-2 disabled:bg-gray-100`}
           />
-          {isValid && (
-            <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-500" />
-          )}
+          <CheckCircle className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-500 transition-opacity ${isValid ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
         </div>
         {hasError && (
           <p className="text-red-600 text-sm mt-2 flex items-start gap-1">
