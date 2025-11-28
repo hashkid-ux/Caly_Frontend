@@ -29,16 +29,18 @@ const OnboardingPage = () => {
 
   const [formData, setFormData] = useState({
     // Step 1: Company Info
+    companyName: user?.companyName || '',
     companyLogo: null,
     timezone: 'Asia/Kolkata',
     language: 'hi',
     
-    // Step 2: Shopify Integration
+    // Step 2: Shopify Integration (Optional)
+    skipShopify: false,
     shopifyStore: '',
     shopifyApiKey: '',
     shopifyApiSecret: '',
     
-    // Step 3: Exotel Setup
+    // Step 3: Exotel Setup (Required)
     exotelNumber: '',
     exotelSid: '',
     exotelToken: '',
@@ -71,11 +73,19 @@ const OnboardingPage = () => {
     const errors = {};
     
     switch (step) {
+      case 1:
+        if (!formData.companyName || formData.companyName.trim() === '') {
+          errors.companyName = 'Company name required';
+        }
+        break;
       case 2:
-        if (!formData.shopifyStore) errors.shopifyStore = 'Shopify store URL required';
-        if (!formData.shopifyApiKey) errors.shopifyApiKey = 'API key required';
-        if (!formData.shopifyApiSecret) errors.shopifyApiSecret = 'API secret required';
-        if (!testResults.shopifyValid) errors.shopifyTest = 'Please test and verify Shopify credentials';
+        // If Shopify is skipped, no validation needed
+        if (!formData.skipShopify) {
+          if (!formData.shopifyStore) errors.shopifyStore = 'Shopify store URL required';
+          if (!formData.shopifyApiKey) errors.shopifyApiKey = 'API key required';
+          if (!formData.shopifyApiSecret) errors.shopifyApiSecret = 'API secret required';
+          if (!testResults.shopifyValid) errors.shopifyTest = 'Please test and verify Shopify credentials';
+        }
         break;
       case 3:
         if (!formData.exotelNumber) errors.exotelNumber = 'Phone number required';
@@ -174,27 +184,33 @@ const OnboardingPage = () => {
 
     try {
       // Call real onboarding API endpoint
+      const payload = {
+        companyName: formData.companyName,
+        // Only include Shopify fields if not skipped
+        shopifyStore: formData.skipShopify ? null : formData.shopifyStore,
+        shopifyApiKey: formData.skipShopify ? null : formData.shopifyApiKey,
+        shopifyApiSecret: formData.skipShopify ? null : formData.shopifyApiSecret,
+        skipShopify: formData.skipShopify,
+        // Exotel is always required
+        exotelNumber: formData.exotelNumber,
+        exotelSid: formData.exotelSid,
+        exotelToken: formData.exotelToken,
+        returnWindowDays: parseInt(formData.returnWindowDays),
+        refundAutoThreshold: parseInt(formData.refundAutoThreshold),
+        cancelWindowHours: parseInt(formData.cancelWindowHours),
+        escalationThreshold: parseInt(formData.escalationThreshold),
+        enableWhatsApp: formData.enableWhatsApp,
+        enableSMS: formData.enableSMS,
+        enableEmail: formData.enableEmail
+      };
+
       const response = await fetch(`${API_BASE_URL}/api/onboarding/complete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         },
-        body: JSON.stringify({
-          shopifyStore: formData.shopifyStore,
-          shopifyApiKey: formData.shopifyApiKey,
-          shopifyApiSecret: formData.shopifyApiSecret,
-          exotelNumber: formData.exotelNumber,
-          exotelSid: formData.exotelSid,
-          exotelToken: formData.exotelToken,
-          returnWindowDays: parseInt(formData.returnWindowDays),
-          refundAutoThreshold: parseInt(formData.refundAutoThreshold),
-          cancelWindowHours: parseInt(formData.cancelWindowHours),
-          escalationThreshold: parseInt(formData.escalationThreshold),
-          enableWhatsApp: formData.enableWhatsApp,
-          enableSMS: formData.enableSMS,
-          enableEmail: formData.enableEmail
-        })
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
@@ -293,14 +309,24 @@ const OnboardingPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Company Name
+                  Company Name {validationErrors.companyName && <span className="text-red-500">*</span>}
                 </label>
                 <input
                   type="text"
-                  value={user?.companyName || ''}
-                  disabled
-                  className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
+                  value={formData.companyName}
+                  onChange={(e) => updateField('companyName', e.target.value)}
+                  placeholder="Enter your company name"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                    validationErrors.companyName ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {validationErrors.companyName && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {validationErrors.companyName}
+                  </p>
+                )}
+                <p className="text-gray-500 text-xs mt-1">This will be used as your business identifier</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -344,7 +370,7 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 2: Shopify Integration */}
+          {/* Step 2: Shopify Integration (Optional) */}
           {step === 2 && (
             <div className="space-y-6">
               <div>
@@ -354,60 +380,102 @@ const OnboardingPage = () => {
                 </h2>
               </div>
 
-              <InputField
-                label="Shopify Store URL"
-                field="shopifyStore"
-                placeholder="your-store.myshopify.com"
-                icon={Globe}
-                required
-              />
-
-              <InputField
-                label="API Key"
-                field="shopifyApiKey"
-                placeholder="shppa_xxxx..."
-                icon={Key}
-                required
-              />
-
-              <InputField
-                label="API Secret"
-                field="shopifyApiSecret"
-                type="password"
-                placeholder="shpss_xxxx..."
-                icon={Key}
-                required
-              />
-
-              {/* Test Shopify Connection */}
-              <div className="border-t pt-4">
-                <button
-                  onClick={testShopifyConnection}
-                  disabled={!formData.shopifyStore || !formData.shopifyApiKey || !formData.shopifyApiSecret || loading}
-                  className="w-full px-4 py-2 bg-green-50 border border-green-200 text-green-700 rounded-lg hover:bg-green-100 disabled:opacity-50 font-medium flex items-center justify-center gap-2"
-                >
-                  {loading && testResults.shopifyTested === false ? (
-                    <Loader className="w-4 h-4 animate-spin" />
-                  ) : testResults.shopifyValid ? (
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                  ) : null}
-                  {testResults.shopifyTested ? (testResults.shopifyValid ? '✓ Shopify Connected' : '✗ Test Failed') : 'Test Shopify Connection'}
-                </button>
-              </div>
-
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 mb-2">
-                  <strong>How to get your API credentials:</strong>
+              {/* Skip Shopify Toggle */}
+              <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.skipShopify}
+                    onChange={(e) => {
+                      updateField('skipShopify', e.target.checked);
+                      // Reset test results when toggling
+                      if (!e.target.checked) {
+                        setTestResults(prev => ({ ...prev, shopifyTested: false, shopifyValid: false }));
+                      }
+                    }}
+                    className="w-4 h-4 text-yellow-600 rounded"
+                  />
+                  <span className="ml-3 text-sm font-medium text-yellow-900">
+                    Skip Shopify Setup for Now
+                  </span>
+                </label>
+                <p className="text-xs text-yellow-800 mt-2">
+                  You can configure Shopify later in Settings. Exotel setup is required to receive calls.
                 </p>
-                <ol className="list-decimal list-inside text-xs text-blue-800 space-y-1">
-                  <li>Go to your Shopify Admin → Apps → Develop apps</li>
-                  <li>Create a new app or select existing app</li>
-                  <li>Go to Configuration tab</li>
-                  <li>Under Admin API access scopes, enable required scopes</li>
-                  <li>Click "Save" and then "Reveal" next to "Admin API access token"</li>
-                  <li>Copy API Key and Secret from API credentials section</li>
-                </ol>
               </div>
+
+              {/* Shopify Fields - Hidden if skipped */}
+              {!formData.skipShopify && (
+                <>
+                  <InputField
+                    label="Shopify Store URL"
+                    field="shopifyStore"
+                    placeholder="your-store.myshopify.com"
+                    icon={Globe}
+                    required
+                  />
+
+                  <InputField
+                    label="API Key"
+                    field="shopifyApiKey"
+                    placeholder="shppa_xxxx..."
+                    icon={Key}
+                    required
+                  />
+
+                  <InputField
+                    label="API Secret"
+                    field="shopifyApiSecret"
+                    type="password"
+                    placeholder="shpss_xxxx..."
+                    icon={Key}
+                    required
+                  />
+
+                  {/* Test Shopify Connection */}
+                  <div className="border-t pt-4">
+                    <button
+                      onClick={testShopifyConnection}
+                      disabled={!formData.shopifyStore || !formData.shopifyApiKey || !formData.shopifyApiSecret || loading}
+                      className="w-full px-4 py-2 bg-green-50 border border-green-200 text-green-700 rounded-lg hover:bg-green-100 disabled:opacity-50 font-medium flex items-center justify-center gap-2"
+                    >
+                      {loading && testResults.shopifyTested === false ? (
+                        <Loader className="w-4 h-4 animate-spin" />
+                      ) : testResults.shopifyValid ? (
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      ) : null}
+                      {testResults.shopifyTested ? (testResults.shopifyValid ? '✓ Shopify Connected' : '✗ Test Failed') : 'Test Shopify Connection'}
+                    </button>
+                  </div>
+
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-800 mb-2">
+                      <strong>How to get your API credentials:</strong>
+                    </p>
+                    <ol className="list-decimal list-inside text-xs text-blue-800 space-y-1">
+                      <li>Go to your Shopify Admin → Apps → Develop apps</li>
+                      <li>Create a new app or select existing app</li>
+                      <li>Go to Configuration tab</li>
+                      <li>Under Admin API access scopes, enable required scopes</li>
+                      <li>Click "Save" and then "Reveal" next to "Admin API access token"</li>
+                      <li>Copy API Key and Secret from API credentials section</li>
+                    </ol>
+                  </div>
+                </>
+              )}
+
+              {/* Skipped Indicator */}
+              {formData.skipShopify && (
+                <div className="p-4 bg-blue-50 rounded-lg flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-800">Shopify Setup Skipped</p>
+                    <p className="text-xs text-blue-700 mt-1">
+                      You can add Shopify integration anytime from Settings → Integrations. For now, let's set up Exotel so you can start receiving calls.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
