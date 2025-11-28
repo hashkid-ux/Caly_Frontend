@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Loader } from 'lucide-react';
 
-const Button = ({ 
+const Button = memo(({ 
   label, 
   onClick = () => {},
   variant = 'primary',
@@ -50,6 +50,8 @@ const Button = ({
       )}
     </button>
   );
-};
+});
+
+Button.displayName = 'Button';
 
 export default Button;

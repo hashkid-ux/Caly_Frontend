@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const Badge = ({ 
+const Badge = memo(({ 
   label, 
   variant = 'default',
   size = 'md',
@@ -37,9 +37,11 @@ const Badge = ({
       )}
     </span>
   );
-};
+});
 
-const BadgeGroup = ({ badges = [], maxDisplay = 3 }) => {
+Badge.displayName = 'Badge';
+
+const BadgeGroup = memo(({ badges = [], maxDisplay = 3 }) => {
   const displayed = badges.slice(0, maxDisplay);
   const hidden = badges.length - maxDisplay;
 
@@ -53,6 +55,8 @@ const BadgeGroup = ({ badges = [], maxDisplay = 3 }) => {
       )}
     </div>
   );
-};
+});
+
+BadgeGroup.displayName = 'BadgeGroup';
 
 export { Badge, BadgeGroup };

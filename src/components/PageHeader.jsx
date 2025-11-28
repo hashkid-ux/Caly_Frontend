@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
-const PageHeader = ({ 
+const PageHeader = memo(({ 
   title, 
   subtitle, 
   showBackButton = true, 
@@ -47,6 +47,8 @@ const PageHeader = ({
       </div>
     </div>
   );
-};
+});
+
+PageHeader.displayName = 'PageHeader';
 
 export default PageHeader;

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const Card = ({ 
+const Card = memo(({ 
   children, 
   title = null,
   subtitle = null,
@@ -34,6 +34,8 @@ const Card = ({
       )}
     </div>
   );
-};
+});
+
+Card.displayName = 'Card';
 
 export default Card;

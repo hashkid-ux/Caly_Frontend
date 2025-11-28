@@ -136,19 +136,19 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
+    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-600 to-blue-800'} flex items-center justify-center p-4`}>
+      <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-xl w-full max-w-md p-8`}>
         {/* Logo / Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Caly</h1>
-          <p className="text-gray-600 mt-2">AI-Powered Customer Support</p>
+          <h1 className={`text-3xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Caly</h1>
+          <p className={isDark ? 'text-gray-400 mt-2' : 'text-gray-600 mt-2'}>AI-Powered Customer Support</p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <span className="text-red-800 text-sm">{error}</span>
+          <div className={`mb-6 p-4 ${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border rounded-lg flex items-start gap-3`}>
+            <AlertCircle className={`w-5 h-5 ${isDark ? 'text-red-400' : 'text-red-600'} flex-shrink-0 mt-0.5`} />
+            <span className={`text-sm ${isDark ? 'text-red-300' : 'text-red-800'}`}>{error}</span>
           </div>
         )}
 
@@ -156,7 +156,7 @@ const LoginPage = () => {
         <button
           onClick={handleGoogleLogin}
           type="button"
-          className="w-full mb-6 flex items-center justify-center gap-3 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-all duration-200"
+          className={`w-full mb-6 flex items-center justify-center gap-3 ${isDark ? 'bg-gray-700 border-gray-600 hover:bg-gray-600 text-gray-200' : 'bg-white border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700'} border-2 font-semibold py-3 px-4 rounded-lg transition-all duration-200`}
           disabled={loading}
         >
           <Chrome className="w-5 h-5" />
@@ -177,17 +177,17 @@ const LoginPage = () => {
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Email Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
               Email Address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-700 border-gray-600 text-gray-100' : 'border-gray-300 bg-white text-gray-900'}`}
                 required
                 disabled={loading}
               />
@@ -196,17 +196,17 @@ const LoginPage = () => {
 
           {/* Password Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDark ? 'bg-gray-700 border-gray-600 text-gray-100' : 'border-gray-300 bg-white text-gray-900'}`}
                 required
                 disabled={loading}
               />
@@ -223,7 +223,7 @@ const LoginPage = () => {
               className="w-4 h-4 text-blue-600 rounded"
               disabled={loading}
             />
-            <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-700">
+            <label htmlFor="rememberMe" className={`ml-2 text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Remember me
             </label>
           </div>

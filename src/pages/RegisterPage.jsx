@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, User, Building, AlertCircle, CheckCircle, Loader, Eye, EyeOff, Chrome } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 if (!process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production') {
   throw new Error('❌ CRITICAL: REACT_APP_API_URL environment variable is required in production. Check your .env.production file.');
@@ -12,6 +13,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isDark } = useTheme();
   const [step, setStep] = useState(1); // 1: signup info, 2: email verification
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -202,12 +204,12 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
+    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-600 to-blue-800'} flex items-center justify-center p-4`}>
+      <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-xl w-full max-w-md p-8`}>
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Caly</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className={`text-3xl font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Caly</h1>
+          <p className={isDark ? 'text-gray-400 mt-2' : 'text-gray-600 mt-2'}>
             {step === 1 ? 'Create Your Account' : 'Verify Your Email'}
           </p>
         </div>
@@ -218,7 +220,7 @@ const RegisterPage = () => {
             <button
               onClick={handleGoogleSignup}
               type="button"
-              className="w-full mb-4 flex items-center justify-center gap-3 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-all duration-200"
+              className={`w-full mb-4 flex items-center justify-center gap-3 ${isDark ? 'bg-gray-700 border-gray-600 hover:bg-gray-600 text-gray-200' : 'bg-white border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700'} border-2 font-semibold py-3 px-4 rounded-lg transition-all duration-200`}
               disabled={loading}
             >
               <Chrome className="w-5 h-5" />
