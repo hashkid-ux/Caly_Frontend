@@ -26,99 +26,70 @@ const LandingPage = () => {
   const features = [
     {
       icon: Phone,
-      title: 'AI Voice Agent',
-      description: 'Intelligent voice responses that handle customer inquiries 24/7 without human intervention'
+      title: 'Natural Conversations',
+      description: 'Advanced AI that understands context and delivers human-like interactions for any service scenario'
     },
     {
       icon: Clock,
-      title: '24/7 Availability',
-      description: 'Never miss a customer. Your AI agent works around the clock, every single day'
+      title: '24/7 Reliability',
+      description: 'Always available, consistent performance around the clock without downtime or fatigue'
     },
     {
       icon: BarChart3,
-      title: '85% Automation Rate',
-      description: 'Handle the majority of customer interactions automatically, freeing up your team'
+      title: 'Intelligent Handling',
+      description: 'Smart routing, escalation, and resolution of customer inquiries with precision'
     },
     {
       icon: Zap,
-      title: 'Instant Responses',
-      description: 'Sub-second response times that keep customers engaged and satisfied'
+      title: 'Lightning Fast',
+      description: 'Sub-500ms response times for seamless, natural-feeling conversations'
     },
     {
       icon: Users,
-      title: 'Multi-Channel Support',
-      description: 'Seamless integration with Shopify, WhatsApp, and your existing systems'
+      title: 'Omnichannel Support',
+      description: 'Work across phone, messaging, chat, and any communication channel your customers prefer'
     },
     {
       icon: Shield,
-      title: 'Enterprise Security',
-      description: 'Bank-grade encryption and compliance with industry standards'
+      title: 'Enterprise Grade',
+      description: 'Bank-level security, compliance, and data protection for your customers'
     }
   ];
 
   const steps = [
     {
       number: '1',
-      title: 'Connect Your Store',
-      description: 'Link your Shopify store or e-commerce platform in minutes'
+      title: 'Connect & Configure',
+      description: 'Integrate with your existing systems and train Caly with your service knowledge'
     },
     {
       number: '2',
-      title: 'Train Your Agent',
-      description: 'Customize product knowledge and response style for your brand'
+      title: 'Customize & Deploy',
+      description: 'Set up voice workflows tailored to your business needs and customer interactions'
     },
     {
       number: '3',
-      title: 'Go Live',
-      description: 'Your AI agent starts handling customer interactions immediately'
+      title: 'Monitor & Improve',
+      description: 'Real-time insights and continuous learning to enhance conversation quality'
     }
   ];
 
-  const pricing = [
+  const benefits = [
     {
-      name: 'Starter',
-      price: '$99',
-      period: '/month',
-      description: 'Perfect for small businesses',
-      features: [
-        'Up to 500 conversations/month',
-        'Basic AI responses',
-        'Email support',
-        'Single store integration'
-      ],
-      cta: 'Get Started',
-      variant: 'outline'
+      title: 'Unmatched Reliability',
+      description: 'Never miss a customer. 99.9% uptime guarantee with consistent performance'
     },
     {
-      name: 'Professional',
-      price: '$299',
-      period: '/month',
-      description: 'Most popular for growing stores',
-      features: [
-        'Up to 5,000 conversations/month',
-        'Advanced AI with learning',
-        'Priority support',
-        'Multiple store integration',
-        'Analytics dashboard'
-      ],
-      cta: 'Start Free Trial',
-      variant: 'primary',
-      popular: true
+      title: 'Superior Quality',
+      description: 'Natural conversations that understand context and deliver excellent customer experience'
     },
     {
-      name: 'Enterprise',
-      price: 'Custom',
-      period: 'pricing',
-      description: 'For large-scale operations',
-      features: [
-        'Unlimited conversations',
-        'Custom AI training',
-        'Dedicated support',
-        'White-label options',
-        'Advanced integrations'
-      ],
-      cta: 'Contact Sales',
-      variant: 'outline'
+      title: 'Always Learning',
+      description: 'Continuously improves through interactions, becoming smarter and better over time'
+    },
+    {
+      title: 'Full Integration',
+      description: 'Works seamlessly with your existing systems and workflows'
     }
   ];
 
@@ -197,7 +168,7 @@ const LandingPage = () => {
               alignItems: 'center',
               '@media (maxWidth: 768px)': { display: 'none' }
             }}>
-              {['Features', 'How it Works', 'Pricing'].map((item) => (
+              {['Features', 'How it Works', 'Benefits'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase().replace(' ', '-')}`}
@@ -260,7 +231,7 @@ const LandingPage = () => {
             borderTop: `1px solid ${colors.gray200}`,
             padding: '16px 24px'
           }}>
-            {['Features', 'How it Works', 'Pricing'].map((item) => (
+            {['Features', 'How it Works', 'Benefits'].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase().replace(' ', '-')}`}
@@ -317,7 +288,7 @@ const LandingPage = () => {
           marginBottom: '16px',
           letterSpacing: '-1px'
         }}>
-          AI Voice Agent for <span style={{ color: colors.primary }}>E-commerce</span>
+          AI Voice Agent for <span style={{ color: colors.primary }}>Any Service</span>
         </h1>
         <p style={{
           fontSize: '20px',
@@ -326,7 +297,7 @@ const LandingPage = () => {
           maxWidth: '600px',
           margin: '0 auto 32px'
         }}>
-          Handle customer inquiries 24/7 with intelligent voice responses. Reduce support costs by 70% while increasing customer satisfaction.
+          Reliable, intelligent voice automation for service and support. Handle customer conversations 24/7 with consistent quality and precision.
         </p>
 
         <div style={{
@@ -369,9 +340,9 @@ const LandingPage = () => {
           borderTop: `1px solid ${colors.gray200}`
         }}>
           {[
-            { value: '10K+', label: 'Conversations Handled' },
-            { value: '85%', label: 'Automation Rate' },
-            { value: '<1s', label: 'Average Response Time' }
+            { value: '99.9%', label: 'Uptime Guarantee' },
+            { value: '<500ms', label: 'Response Time' },
+            { value: '24/7', label: 'Availability' }
           ].map((stat, idx) => (
             <div key={idx}>
               <p style={{ fontSize: '28px', fontWeight: '700', color: colors.primary, marginBottom: '4px' }}>
@@ -543,8 +514,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" style={{
+      {/* Benefits Section */}
+      <section id="benefits" style={{
         backgroundColor: colors.bgSecondary,
         padding: '60px 24px'
       }}>
@@ -556,7 +527,7 @@ const LandingPage = () => {
               marginBottom: '16px',
               letterSpacing: '-0.5px'
             }}>
-              Simple, Transparent Pricing
+              Why Choose Caly
             </h2>
             <p style={{
               fontSize: '16px',
@@ -564,113 +535,63 @@ const LandingPage = () => {
               maxWidth: '500px',
               margin: '0 auto'
             }}>
-              Choose the plan that fits your business. No hidden fees. Cancel anytime.
+              Built for reliability, quality, and seamless integration with your service workflows
             </p>
           </div>
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '24px'
           }}>
-            {pricing.map((plan, idx) => (
+            {benefits.map((benefit, idx) => (
               <div
                 key={idx}
                 style={{
                   backgroundColor: colors.bgPrimary,
-                  border: plan.popular ? `2px solid ${colors.primary}` : `1px solid ${colors.gray200}`,
+                  border: `1px solid ${colors.gray200}`,
                   borderRadius: '8px',
                   padding: '32px',
-                  position: 'relative',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => {
-                  if (!plan.popular) {
-                    e.currentTarget.style.borderColor = colors.primary;
-                  }
+                  e.currentTarget.style.borderColor = colors.primary;
                   e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = `0 4px 12px rgba(37, 99, 235, 0.1)`;
                 }}
                 onMouseLeave={(e) => {
-                  if (!plan.popular) {
-                    e.currentTarget.style.borderColor = colors.gray200;
-                  }
+                  e.currentTarget.style.borderColor = colors.gray200;
                   e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                {plan.popular && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '-12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    backgroundColor: colors.primary,
-                    color: colors.light,
-                    padding: '4px 12px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    letterSpacing: '0.5px'
-                  }}>
-                    MOST POPULAR
-                  </div>
-                )}
-
-                <h3 style={{
-                  fontSize: '22px',
-                  fontWeight: '600',
-                  marginBottom: '8px'
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  backgroundColor: `rgba(37, 99, 235, 0.1)`,
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '16px'
                 }}>
-                  {plan.name}
+                  <CheckCircle2 size={24} color={colors.primary} />
+                </div>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  marginBottom: '12px'
+                }}>
+                  {benefit.title}
                 </h3>
                 <p style={{
                   fontSize: '14px',
                   color: colors.textSecondary,
-                  marginBottom: '24px'
+                  lineHeight: '1.6'
                 }}>
-                  {plan.description}
+                  {benefit.description}
                 </p>
-
-                <div style={{ marginBottom: '24px' }}>
-                  <span style={{
-                    fontSize: '36px',
-                    fontWeight: '700',
-                    color: colors.primary
-                  }}>
-                    {plan.price}
-                  </span>
-                  <span style={{
-                    fontSize: '14px',
-                    color: colors.textSecondary,
-                    marginLeft: '8px'
-                  }}>
-                    {plan.period}
-                  </span>
-                </div>
-
-                <Button
-                  onClick={() => navigate(plan.name === 'Enterprise' ? '/contact' : '/register')}
-                  variant={plan.variant}
-                  style={{
-                    width: '100%',
-                    marginBottom: '24px'
-                  }}
-                >
-                  {plan.cta}
-                </Button>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {plan.features.map((feature, fidx) => (
-                    <div key={fidx} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <CheckCircle2 size={18} color={colors.primary} style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span style={{
-                        fontSize: '14px',
-                        color: colors.textSecondary
-                      }}>
-                        {feature}
-                      </span>
-                    </div>
-                  ))}
-                </div>
               </div>
             ))}
           </div>
@@ -690,7 +611,7 @@ const LandingPage = () => {
             marginBottom: '16px',
             letterSpacing: '-0.5px'
           }}>
-            Ready to Transform Your Customer Support?
+            Ready to Experience Reliable AI Automation?
           </h2>
           <p style={{
             fontSize: '16px',
@@ -698,7 +619,7 @@ const LandingPage = () => {
             opacity: 0.9,
             lineHeight: '1.6'
           }}>
-            Join hundreds of e-commerce businesses reducing support costs while improving customer satisfaction.
+            Join organizations leveraging intelligent voice automation for superior customer service.
           </p>
           <Button
             onClick={() => navigate('/register')}
@@ -708,7 +629,7 @@ const LandingPage = () => {
               padding: '12px 32px'
             }}
           >
-            Start Your Free Trial
+            Get Started Today
           </Button>
         </div>
       </section>
