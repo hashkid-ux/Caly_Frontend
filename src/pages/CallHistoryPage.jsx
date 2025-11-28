@@ -4,7 +4,9 @@ import { useI18n } from '../context/I18nContext';
 import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
 import MobileNavigation from '../components/MobileNavigation';
-import { Phone, Search, Filter, Clock, User, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import { SkeletonTable } from '../components/SkeletonLoader';
+import EmptyState from '../components/EmptyState';
+import { Phone, Search, Filter, Clock, User, CheckCircle, AlertCircle } from 'lucide-react';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
@@ -95,12 +97,13 @@ const CallHistoryPage = () => {
 
   if (loading) {
     return (
-      <div className={`flex items-center justify-center min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="text-center">
-          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('callHistory.loadingCalls')}</p>
+      <>
+        <PageHeader title={t('callHistory.title')} />
+        <div className={`p-6 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+          <SkeletonTable rows={5} cols={5} />
         </div>
-      </div>
+        <MobileNavigation />
+      </>
     );
   }
 

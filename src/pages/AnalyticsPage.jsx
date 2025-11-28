@@ -4,11 +4,13 @@ import { useI18n } from '../context/I18nContext';
 import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
 import MobileNavigation from '../components/MobileNavigation';
+import { SkeletonCard } from '../components/SkeletonLoader';
+import EmptyState from '../components/EmptyState';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { TrendingUp, DollarSign, Phone, Clock, AlertCircle, Loader } from 'lucide-react';
+import { TrendingUp, DollarSign, Phone, Clock, AlertCircle } from 'lucide-react';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
