@@ -30,6 +30,7 @@ const CallHistoryPage = lazy(() => import('./pages/CallHistoryPage'));
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 
 function App() {
   return (
@@ -108,8 +109,8 @@ function App() {
                 }
               />
 
-              {/* Root redirect */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              {/* Landing Page - Public homepage */}
+              <Route path="/" element={<LandingPage />} />
 
               {/* Catch-all 404 */}
               <Route path="*" element={<NotFoundPage />} />
