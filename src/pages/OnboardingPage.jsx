@@ -40,7 +40,8 @@ const OnboardingPage = () => {
     shopifyApiKey: '',
     shopifyApiSecret: '',
     
-    // Step 3: Exotel Setup (Required)
+    // Step 3: Exotel Setup (Optional)
+    skipExotel: false,
     exotelNumber: '',
     exotelSid: '',
     exotelToken: '',
@@ -88,10 +89,13 @@ const OnboardingPage = () => {
         }
         break;
       case 3:
-        if (!formData.exotelNumber) errors.exotelNumber = 'Phone number required';
-        if (!formData.exotelSid) errors.exotelSid = 'Exotel SID required';
-        if (!formData.exotelToken) errors.exotelToken = 'API token required';
-        if (!testResults.exotelValid) errors.exotelTest = 'Please test and verify Exotel credentials';
+        // If Exotel is skipped, no validation needed
+        if (!formData.skipExotel) {
+          if (!formData.exotelNumber) errors.exotelNumber = 'Phone number required';
+          if (!formData.exotelSid) errors.exotelSid = 'Exotel SID required';
+          if (!formData.exotelToken) errors.exotelToken = 'API token required';
+          if (!testResults.exotelValid) errors.exotelTest = 'Please test and verify Exotel credentials';
+        }
         break;
       default:
         break;
@@ -191,10 +195,11 @@ const OnboardingPage = () => {
         shopifyApiKey: formData.skipShopify ? null : formData.shopifyApiKey,
         shopifyApiSecret: formData.skipShopify ? null : formData.shopifyApiSecret,
         skipShopify: formData.skipShopify,
-        // Exotel is always required
-        exotelNumber: formData.exotelNumber,
-        exotelSid: formData.exotelSid,
-        exotelToken: formData.exotelToken,
+        // Only include Exotel fields if not skipped
+        exotelNumber: formData.skipExotel ? null : formData.exotelNumber,
+        exotelSid: formData.skipExotel ? null : formData.exotelSid,
+        exotelToken: formData.skipExotel ? null : formData.exotelToken,
+        skipExotel: formData.skipExotel,
         returnWindowDays: parseInt(formData.returnWindowDays),
         refundAutoThreshold: parseInt(formData.refundAutoThreshold),
         cancelWindowHours: parseInt(formData.cancelWindowHours),
@@ -479,7 +484,7 @@ const OnboardingPage = () => {
             </div>
           )}
 
-          {/* Step 3: Exotel Setup */}
+          {/* Step 3: Exotel Setup (Optional) */}
           {step === 3 && (
             <div className="space-y-6">
               <div>
@@ -489,57 +494,99 @@ const OnboardingPage = () => {
                 </h2>
               </div>
 
-              <InputField
-                label="Phone Number"
-                field="exotelNumber"
-                placeholder="+91 80XXXXXXXX"
-                icon={Phone}
-                required
-                helper="Your Exotel phone number for receiving calls"
-              />
-
-              <InputField
-                label="Exotel SID"
-                field="exotelSid"
-                placeholder="Your Exotel Account SID"
-                required
-              />
-
-              <InputField
-                label="API Token"
-                field="exotelToken"
-                type="password"
-                placeholder="Your Exotel API Token"
-                required
-              />
-
-              {/* Test Exotel Connection */}
-              <div className="border-t pt-4">
-                <button
-                  onClick={testExotelConnection}
-                  disabled={!formData.exotelSid || !formData.exotelToken || loading}
-                  className="w-full px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 rounded-lg hover:bg-purple-100 disabled:opacity-50 font-medium flex items-center justify-center gap-2"
-                >
-                  {loading && testResults.exotelTested === false ? (
-                    <Loader className="w-4 h-4 animate-spin" />
-                  ) : testResults.exotelValid ? (
-                    <CheckCircle className="w-4 h-4 text-purple-600" />
-                  ) : null}
-                  {testResults.exotelTested ? (testResults.exotelValid ? '✓ Exotel Connected' : '✗ Test Failed') : 'Test Exotel Connection'}
-                </button>
+              {/* Skip Exotel Toggle */}
+              <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.skipExotel}
+                    onChange={(e) => {
+                      updateField('skipExotel', e.target.checked);
+                      // Reset test results when toggling
+                      if (!e.target.checked) {
+                        setTestResults(prev => ({ ...prev, exotelTested: false, exotelValid: false }));
+                      }
+                    }}
+                    className="w-4 h-4 text-yellow-600 rounded"
+                  />
+                  <span className="ml-3 text-sm font-medium text-yellow-900">
+                    Skip Exotel Setup for Now
+                  </span>
+                </label>
+                <p className="text-xs text-yellow-800 mt-2">
+                  You can configure Exotel later in Settings. Without Exotel, you won't receive calls.
+                </p>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 mb-2">
-                  <strong>Webhook Configuration:</strong>
-                </p>
-                <p className="text-xs text-blue-800 mb-3">
-                  After completing setup, add this webhook URL to your Exotel dashboard:
-                </p>
-                <code className="block bg-white p-2 rounded text-xs text-gray-800 border border-blue-200">
-                  {API_BASE_URL}/webhooks/exotel/call-start
-                </code>
-              </div>
+              {/* Exotel Fields - Hidden if skipped */}
+              {!formData.skipExotel && (
+                <>
+                  <InputField
+                    label="Phone Number"
+                    field="exotelNumber"
+                    placeholder="+91 80XXXXXXXX"
+                    icon={Phone}
+                    required
+                    helper="Your Exotel phone number for receiving calls"
+                  />
+
+                  <InputField
+                    label="Exotel SID"
+                    field="exotelSid"
+                    placeholder="Your Exotel Account SID"
+                    required
+                  />
+
+                  <InputField
+                    label="API Token"
+                    field="exotelToken"
+                    type="password"
+                    placeholder="Your Exotel API Token"
+                    required
+                  />
+
+                  {/* Test Exotel Connection */}
+                  <div className="border-t pt-4">
+                    <button
+                      onClick={testExotelConnection}
+                      disabled={!formData.exotelSid || !formData.exotelToken || loading}
+                      className="w-full px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 rounded-lg hover:bg-purple-100 disabled:opacity-50 font-medium flex items-center justify-center gap-2"
+                    >
+                      {loading && testResults.exotelTested === false ? (
+                        <Loader className="w-4 h-4 animate-spin" />
+                      ) : testResults.exotelValid ? (
+                        <CheckCircle className="w-4 h-4 text-purple-600" />
+                      ) : null}
+                      {testResults.exotelTested ? (testResults.exotelValid ? '✓ Exotel Connected' : '✗ Test Failed') : 'Test Exotel Connection'}
+                    </button>
+                  </div>
+
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-800 mb-2">
+                      <strong>Webhook Configuration:</strong>
+                    </p>
+                    <p className="text-xs text-blue-800 mb-3">
+                      After completing setup, add this webhook URL to your Exotel dashboard:
+                    </p>
+                    <code className="block bg-white p-2 rounded text-xs text-gray-800 border border-blue-200">
+                      {API_BASE_URL}/webhooks/exotel/call-start
+                    </code>
+                  </div>
+                </>
+              )}
+
+              {/* Skipped Indicator */}
+              {formData.skipExotel && (
+                <div className="p-4 bg-blue-50 rounded-lg flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-800">Exotel Setup Skipped</p>
+                    <p className="text-xs text-blue-700 mt-1">
+                      You can add Exotel integration anytime from Settings → Integrations. Without Exotel, incoming calls won't be routed to your voice agent.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
