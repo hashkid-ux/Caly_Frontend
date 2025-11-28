@@ -23,7 +23,7 @@ const Sidebar = ({ isOpen, onToggle, onLogout }) => {
   };
 
   return (
-    <div className={`${isOpen ? 'w-64' : 'w-20'} bg-gray-900 text-white transition-all duration-300 flex flex-col h-screen fixed left-0 top-0 z-40`}>
+    <div className={`${isOpen ? 'w-64' : 'w-20'} hidden md:flex bg-gray-900 text-white transition-all duration-300 flex-col h-screen fixed left-0 top-0 z-40`}>
       {/* Logo Section */}
       <div className="p-6 flex items-center justify-between border-b border-gray-800">
         {isOpen && <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Caly</h1>}

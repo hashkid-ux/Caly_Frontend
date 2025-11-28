@@ -120,7 +120,7 @@ const Dashboard = () => {
       />
 
       {/* Main Content */}
-      <div className={`${sidebarOpen ? 'ml-64' : 'ml-20'} flex-1 overflow-auto transition-all duration-300`}>
+      <div className={`hidden md:flex md:flex-col flex-1 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
         {/* Breadcrumb Navigation */}
         <Breadcrumb />
 
@@ -131,6 +131,12 @@ const Dashboard = () => {
           showBackButton={false}
           actions={<UserMenu />}
         />
+
+        {/* Mobile Header (hidden on desktop) */}
+        <div className="md:hidden bg-white border-b p-4">
+          <h2 className="text-xl font-bold text-gray-900">Dashboard</h2>
+          <p className="text-gray-600 text-sm">Welcome back</p>
+        </div>
 
         {/* Error Alert */}
         {error && (

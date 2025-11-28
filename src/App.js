@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { I18nProvider } from './context/I18nContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import OnboardingGuard from './components/OnboardingGuard';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -22,9 +24,11 @@ import NotFoundPage from './pages/NotFoundPage';
 function App() {
   return (
     <ErrorBoundary>
-      <Router>
-        <AuthProvider>
-          <Routes>
+      <ThemeProvider>
+        <I18nProvider initialLanguage="en">
+          <Router>
+            <AuthProvider>
+              <Routes>
             {/* Public Routes - No Auth Required */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -99,8 +103,10 @@ function App() {
             {/* Catch-all 404 */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
-        </AuthProvider>
-      </Router>
+            </AuthProvider>
+          </Router>
+        </I18nProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

@@ -24,25 +24,25 @@ const PageHeader = ({
   return (
     <div className="bg-white border-b border-gray-200">
       {breadcrumb}
-      <div className="px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="px-4 md:px-6 py-3 md:py-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
             {shouldShowBack && (
               <button
                 onClick={handleBack}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
                 title="Go back"
                 aria-label="Go back"
               >
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
               </button>
             )}
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-              {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
+            <div className="min-w-0">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">{title}</h1>
+              {subtitle && <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1 truncate">{subtitle}</p>}
             </div>
           </div>
-          {actions && <div className="flex items-center space-x-2">{actions}</div>}
+          {actions && <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>}
         </div>
       </div>
     </div>
