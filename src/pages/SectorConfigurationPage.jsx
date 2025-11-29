@@ -185,6 +185,189 @@ const SECTOR_CONFIGS = {
         defaultValue: true
       }
     ]
+  },
+  support: {
+    title: 'Customer Support Configuration',
+    fields: [
+      {
+        name: 'l1_resolution_target_mins',
+        label: 'L1 Resolution Target (Minutes)',
+        type: 'number',
+        description: 'Target time for L1 support to resolve issues',
+        defaultValue: 15,
+        min: 5,
+        max: 120
+      },
+      {
+        name: 'escalation_threshold_rating',
+        label: 'Escalation Threshold (Rating)',
+        type: 'number',
+        description: 'Escalate if customer satisfaction below this rating (1-5)',
+        defaultValue: 2.5,
+        min: 1,
+        max: 5,
+        step: 0.5
+      },
+      {
+        name: 'ticket_priority_auto_assign',
+        label: 'Auto-assign Based on Priority',
+        type: 'checkbox',
+        description: 'Automatically assign tickets based on priority level',
+        defaultValue: true
+      }
+    ]
+  },
+  telecom: {
+    title: 'Telecom & Utilities Configuration',
+    fields: [
+      {
+        name: 'outage_alert_threshold_mins',
+        label: 'Outage Alert Threshold (Minutes)',
+        type: 'number',
+        description: 'Alert customers after service down for X minutes',
+        defaultValue: 30,
+        min: 5,
+        max: 240
+      },
+      {
+        name: 'billing_cycle_day',
+        label: 'Billing Cycle Day (of month)',
+        type: 'number',
+        description: 'Day of month when billing cycle starts',
+        defaultValue: 1,
+        min: 1,
+        max: 28
+      },
+      {
+        name: 'service_activation_timeout_hours',
+        label: 'Service Activation Timeout (Hours)',
+        type: 'number',
+        description: 'Maximum time to activate new service',
+        defaultValue: 24,
+        min: 1,
+        max: 72
+      }
+    ]
+  },
+  government: {
+    title: 'Government & Public Services Configuration',
+    fields: [
+      {
+        name: 'complaint_resolution_sla_days',
+        label: 'Complaint Resolution SLA (Days)',
+        type: 'number',
+        description: 'Target days to resolve public complaints',
+        defaultValue: 7,
+        min: 1,
+        max: 60
+      },
+      {
+        name: 'permit_processing_days',
+        label: 'Permit Processing Time (Days)',
+        type: 'number',
+        description: 'Standard processing time for permits',
+        defaultValue: 14,
+        min: 1,
+        max: 60
+      },
+      {
+        name: 'transparency_logging_enabled',
+        label: 'Transparency Logging',
+        type: 'checkbox',
+        description: 'Log all interactions for transparency and audit',
+        defaultValue: true
+      }
+    ]
+  },
+  education: {
+    title: 'Education & EdTech Configuration',
+    fields: [
+      {
+        name: 'admission_application_deadline_days',
+        label: 'Admission Deadline (Days from now)',
+        type: 'number',
+        description: 'Days until application deadline',
+        defaultValue: 60,
+        min: 1,
+        max: 365
+      },
+      {
+        name: 'batch_capacity_per_class',
+        label: 'Batch Capacity (Students)',
+        type: 'number',
+        description: 'Maximum students per batch/class',
+        defaultValue: 40,
+        min: 10,
+        max: 500
+      },
+      {
+        name: 'enrollment_confirmation_required',
+        label: 'Enrollment Confirmation Required',
+        type: 'checkbox',
+        description: 'Require confirmation before finalizing enrollment',
+        defaultValue: true
+      }
+    ]
+  },
+  travel: {
+    title: 'Travel & Hospitality Configuration',
+    fields: [
+      {
+        name: 'booking_confirmation_timeout_mins',
+        label: 'Booking Confirmation Timeout (Minutes)',
+        type: 'number',
+        description: 'Time to confirm booking before cancellation',
+        defaultValue: 10,
+        min: 5,
+        max: 60
+      },
+      {
+        name: 'checkin_window_hours_before',
+        label: 'Check-in Window (Hours before)',
+        type: 'number',
+        description: 'Hours before arrival when check-in is allowed',
+        defaultValue: 24,
+        min: 1,
+        max: 168
+      },
+      {
+        name: 'disruption_alert_enabled',
+        label: 'Disruption Alerts',
+        type: 'checkbox',
+        description: 'Send alerts for flight delays, weather, etc.',
+        defaultValue: true
+      }
+    ]
+  },
+  saas: {
+    title: 'SaaS & Software Configuration',
+    fields: [
+      {
+        name: 'onboarding_completion_target_days',
+        label: 'Onboarding Completion Target (Days)',
+        type: 'number',
+        description: 'Target days for full onboarding completion',
+        defaultValue: 7,
+        min: 1,
+        max: 30
+      },
+      {
+        name: 'demo_session_duration_mins',
+        label: 'Demo Session Duration (Minutes)',
+        type: 'number',
+        description: 'Standard duration for product demo sessions',
+        defaultValue: 30,
+        min: 15,
+        max: 120
+      },
+      {
+        name: 'feature_faq_auto_suggest',
+        label: 'Auto-suggest Feature FAQs',
+        type: 'checkbox',
+        description: 'Automatically suggest relevant feature FAQs',
+        defaultValue: true
+      }
+    ]
   }
 };
 

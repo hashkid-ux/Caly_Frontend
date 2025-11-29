@@ -47,7 +47,7 @@ const SECTORS = [
     icon: DollarSign,
     color: 'from-indigo-500 to-indigo-600',
     features: ['Balance inquiries', 'Transaction verification', 'Fraud reporting', 'Loan FAQs'],
-    comingSoon: true
+    comingSoon: false
   },
   {
     id: 'support',
@@ -56,7 +56,7 @@ const SECTORS = [
     icon: Headphones,
     color: 'from-cyan-500 to-cyan-600',
     features: ['L1 support', 'Ticket creation', 'FAQ lookup', 'Issue escalation'],
-    comingSoon: true
+    comingSoon: false
   },
   {
     id: 'telecom',
@@ -65,7 +65,7 @@ const SECTORS = [
     icon: Zap,
     color: 'from-orange-500 to-orange-600',
     features: ['Outage notifications', 'Billing queries', 'Service activation', 'Appointments'],
-    comingSoon: true
+    comingSoon: false
   },
   {
     id: 'government',
@@ -74,7 +74,7 @@ const SECTORS = [
     icon: Shield,
     color: 'from-red-500 to-red-600',
     features: ['Citizen routing', 'Complaint intake', 'Status updates', 'Permit tracking'],
-    comingSoon: true
+    comingSoon: false
   },
   {
     id: 'education',
@@ -83,7 +83,7 @@ const SECTORS = [
     icon: GraduationCap,
     color: 'from-pink-500 to-pink-600',
     features: ['Admissions FAQ', 'Batch schedules', 'Enrollment', 'Reminders'],
-    comingSoon: true
+    comingSoon: false
   },
   {
     id: 'travel',
@@ -92,7 +92,7 @@ const SECTORS = [
     icon: Plane,
     color: 'from-teal-500 to-teal-600',
     features: ['Booking confirmations', 'Itinerary Q&A', 'Check-in info', 'Disruption alerts'],
-    comingSoon: true
+    comingSoon: false
   },
   {
     id: 'saas',
@@ -101,7 +101,7 @@ const SECTORS = [
     icon: Users,
     color: 'from-slate-500 to-slate-600',
     features: ['Onboarding support', 'Billing queries', 'Demo scheduling', 'Feature FAQs'],
-    comingSoon: true
+    comingSoon: false
   }
 ];
 
