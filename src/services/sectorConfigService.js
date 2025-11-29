@@ -254,6 +254,186 @@ class SectorConfigService {
 
     return defaults[sector] || defaults.ecommerce;
   }
+
+  /**
+   * Get all sectors for the current client
+   * @param {string} accessToken - Auth token
+   * @returns {Promise<object[]>} - List of sectors with status
+   */
+  static async getAllSectors(accessToken) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/sector`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch sectors: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.sectors || [];
+    } catch (error) {
+      console.error('Error fetching sectors:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get agents available for a sector
+   * @param {string} sector - Sector identifier
+   * @param {string} accessToken - Auth token
+   * @returns {Promise<object[]>} - List of agents
+   */
+  static async getSectorAgents(sector, accessToken) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/sector/${sector}/agents`,
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch agents: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.agents || [];
+    } catch (error) {
+      console.error('Error fetching sector agents:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get entity types for a sector
+   * @param {string} sector - Sector identifier
+   * @param {string} accessToken - Auth token (optional - may be public)
+   * @returns {Promise<object[]>} - List of entity types
+   */
+  static async getSectorEntities(sector, accessToken = null) {
+    try {
+      const headers = {};
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/sector/${sector}/entities`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch entities: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.entities || [];
+    } catch (error) {
+      console.error('Error fetching sector entities:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get intent patterns for a sector
+   * @param {string} sector - Sector identifier
+   * @param {string} language - Language code (default: english)
+   * @param {string} accessToken - Auth token (optional)
+   * @returns {Promise<object[]>} - List of intent patterns
+   */
+  static async getSectorIntentPatterns(sector, language = 'english', accessToken = null) {
+    try {
+      const headers = {};
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/sector/${sector}/intent-patterns?language=${language}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch intent patterns: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.patterns || [];
+    } catch (error) {
+      console.error('Error fetching intent patterns:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Enable a sector for the current client
+   * @param {string} sector - Sector identifier
+   * @param {string} accessToken - Auth token
+   * @returns {Promise<object>} - Sector status
+   */
+  static async enableSector(sector, accessToken) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/sector/${sector}/enable`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to enable sector: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error enabling sector:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Disable a sector for the current client
+   * @param {string} sector - Sector identifier
+   * @param {string} accessToken - Auth token
+   * @returns {Promise<object>} - Sector status
+   */
+  static async disableSector(sector, accessToken) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/sector/${sector}/disable`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to disable sector: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error disabling sector:', error);
+      throw error;
+    }
+  }
 }
 
 export default SectorConfigService;
