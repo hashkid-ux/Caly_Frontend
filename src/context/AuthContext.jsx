@@ -90,6 +90,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [sector, setSector] = useState(null); // ✅ SECTOR EXPANSION: Add sector field
 
   // Initialize from localStorage on app load
   useEffect(() => {
@@ -105,6 +106,13 @@ export const AuthProvider = ({ children }) => {
         if (savedOnboardingStatus !== null) {
           setOnboardingCompleted(JSON.parse(savedOnboardingStatus));
           logger.debug('✅ [Auth] Restored onboarding status from localStorage:', JSON.parse(savedOnboardingStatus));
+        }
+        
+        // ✅ SECTOR EXPANSION: Restore sector from localStorage
+        const savedSector = localStorage.getItem('sector');
+        if (savedSector !== null) {
+          setSector(savedSector);
+          logger.debug('✅ [Auth] Restored sector from localStorage:', savedSector);
         }
         
         if (accessToken) {
@@ -190,6 +198,14 @@ export const AuthProvider = ({ children }) => {
         // ✅ FIX: Also save clientId to localStorage for easy access
         localStorage.setItem('clientId', data.user.clientId);
         localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // ✅ SECTOR EXPANSION: Save sector if available from backend
+        if (data.user.sector) {
+          setSector(data.user.sector);
+          localStorage.setItem('sector', data.user.sector);
+          logger.debug('✅ [Auth] Sector saved:', data.user.sector);
+        }
+        
         setError(null);
 
         // ✅ NEW: Fetch onboarding status after profile is loaded
@@ -219,9 +235,11 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('clientId');
         localStorage.removeItem('userId');
         localStorage.removeItem('onboardingCompleted');
+        localStorage.removeItem('sector'); // ✅ SECTOR EXPANSION: Clear sector on logout
         setToken(null);
         setUser(null);
         setOnboardingCompleted(false);
+        setSector(null); // ✅ SECTOR EXPANSION: Clear sector state
         setError('Session expired. Please login again.');
       } else {
         throw new Error(`Failed to fetch profile: ${response.status}`);
@@ -440,6 +458,7 @@ export const AuthProvider = ({ children }) => {
     token,
     isRefreshing,
     onboardingCompleted,
+    sector, // ✅ SECTOR EXPANSION: Add sector to context value
     isAuthenticated: isAuthenticated(),
     login,
     register,
