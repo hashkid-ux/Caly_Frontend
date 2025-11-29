@@ -63,7 +63,7 @@ const RegisterPage = () => {
 
   const handleGoogleSignup = () => {
     // Redirect to Google OAuth
-    window.location.href = `${API_BASE_URL}/api/auth/google`;
+    window.location.href = `${API_BASE_URL}/api/auth/google/callback`;
   };
 
   const handleInputChange = (e) => {
