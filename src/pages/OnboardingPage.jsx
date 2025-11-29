@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import SectorSelector from '../components/SectorSelector';
 import { 
-  Building, Phone, CheckCircle, AlertCircle, Loader, Zap, ArrowRight, Settings
+  Building, Phone, CheckCircle, AlertCircle, Loader, Zap, ArrowRight, Settings, ArrowLeft
 } from 'lucide-react';
 
 if (!process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production') {
@@ -15,7 +16,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const { user, setOnboardingCompletedStatus } = useAuth();
-  const [step, setStep] = useState(1); // 1 = form, 2 = success
+  const [step, setStep] = useState(0); // 0 = sector selection, 1 = form, 2 = success
+  const [selectedSector, setSelectedSector] = useState('ecommerce'); // ✅ PHASE 2: Sector selection
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
@@ -58,6 +60,7 @@ const OnboardingPage = () => {
       const payload = {
         companyName: formData.companyName,
         phoneNumber: formData.phoneNumber,
+        sector: selectedSector, // ✅ PHASE 2: Include sector in submission
         // Minimal required fields - rest done via Settings later
         skipShopify: true,
         skipExotel: true,
@@ -102,6 +105,49 @@ const OnboardingPage = () => {
     }
   };
 
+  // Step 0: Sector Selection (NEW - ✅ PHASE 2)
+  if (step === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-4 flex items-center justify-center">
+        <div className="w-full max-w-4xl">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Welcome to Caly</h1>
+            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              AI Voice Agent for Any Service. Let's start by understanding your business better.
+            </p>
+          </div>
+
+          {/* Sector Selector */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+            <SectorSelector
+              selectedSector={selectedSector}
+              onSelect={(sector) => setSelectedSector(sector)}
+              showComingSoon={true}
+              maxColumns={3}
+            />
+          </div>
+
+          {/* Next Button */}
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={() => setStep(1)}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+            >
+              Next
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Step 1: Quick Setup Form
   if (step === 1) {
     return (
@@ -116,6 +162,7 @@ const OnboardingPage = () => {
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Let's Get Started</h1>
             <p className="text-gray-600 dark:text-gray-400">Set up your Caly account in just 60 seconds</p>
+            <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Sector: <strong className="text-gray-700 dark:text-gray-300 capitalize">{selectedSector}</strong></p>
           </div>
 
           {/* Form Card */}
@@ -202,6 +249,16 @@ const OnboardingPage = () => {
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
+            </button>
+
+            {/* Back Button */}
+            <button
+              onClick={() => setStep(0)}
+              disabled={loading}
+              className="w-full mt-3 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 text-gray-900 dark:text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back
             </button>
           </div>
 
