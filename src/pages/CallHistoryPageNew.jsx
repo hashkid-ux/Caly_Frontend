@@ -20,8 +20,6 @@ const CallHistoryPageNew = () => {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(50);
   const [filters, setFilters] = useState({
-    sector: 'all',
-    agent: '',
     status: 'all',
     dateRange: 'week'
   });
@@ -41,8 +39,6 @@ const CallHistoryPageNew = () => {
   } = useCalls(user?.client_id, {
     page,
     limit: pageSize,
-    sector: filters.sector === 'all' ? null : filters.sector,
-    agent: filters.agent || null,
     status: filters.status === 'all' ? null : filters.status,
     days: getDaysFromDateRange(filters.dateRange),
     search: searchQuery || null
@@ -73,16 +69,15 @@ const CallHistoryPageNew = () => {
 
   // Export to CSV
   const handleExport = () => {
-    const headers = ['Call ID', 'Date', 'Duration (sec)', 'Sector', 'Agent', 'Status', 'Caller', 'Outcome'];
+    const headers = ['Call ID', 'Date', 'Duration (sec)', 'From', 'To', 'Status', 'Satisfaction'];
     const rows = calls.map(call => [
       call.id,
       new Date(call.start_ts).toLocaleString(),
-      Math.round(call.duration_seconds),
-      call.sector || 'N/A',
-      call.agent_type || 'N/A',
+      Math.round(call.duration_seconds || 0),
+      call.phone_from || 'N/A',
+      call.phone_to || 'N/A',
       call.resolved ? 'Completed' : 'Pending',
-      call.customer_name || 'Unknown',
-      call.outcome || 'N/A'
+      call.customer_satisfaction || 'N/A'
     ]);
 
     const csv = [headers, ...rows].map(r => r.map(cell => `"${cell}"`).join(',')).join('\n');
@@ -104,17 +99,11 @@ const CallHistoryPageNew = () => {
 
   // Status badge color
   const getStatusColor = (call) => {
-    if (call.resolved) return 'green';
-    if (call.failed) return 'red';
-    if (call.escalated) return 'orange';
-    return 'gray';
+    return call.resolved ? 'green' : 'gray';
   };
 
   const getStatusText = (call) => {
-    if (call.resolved) return 'Completed';
-    if (call.failed) return 'Failed';
-    if (call.escalated) return 'Escalated';
-    return 'Pending';
+    return call.resolved ? 'Completed' : 'Pending';
   };
 
   if (error) {
@@ -137,13 +126,13 @@ const CallHistoryPageNew = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Search & Filter Section */}
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
             {/* Search */}
             <div className="relative md:col-span-2">
               <Search size={18} className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by caller, agent, or outcome..."
+                placeholder="Search by phone number or transcript..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -152,22 +141,6 @@ const CallHistoryPageNew = () => {
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
-            {/* Sector Filter */}
-            <select
-              value={filters.sector}
-              onChange={(e) => {
-                setFilters({ ...filters, sector: e.target.value });
-                setPage(1);
-              }}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Sectors</option>
-              <option value="healthcare">Healthcare</option>
-              <option value="ecommerce">E-Commerce</option>
-              <option value="logistics">Logistics</option>
-              <option value="fintech">Fintech</option>
-            </select>
 
             {/* Status Filter */}
             <select
@@ -180,8 +153,7 @@ const CallHistoryPageNew = () => {
             >
               <option value="all">All Status</option>
               <option value="completed">Completed</option>
-              <option value="escalated">Escalated</option>
-              <option value="failed">Failed</option>
+              <option value="unresolved">Unresolved</option>
             </select>
 
             {/* Date Range */}
@@ -267,7 +239,7 @@ const CallHistoryPageNew = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div>
                         <p className="font-semibold text-gray-900">
-                          {call.customer_name || 'Unknown Caller'} ({call.customer_phone || 'No phone'})
+                          {call.phone_from || 'Unknown'} → {call.phone_to || 'N/A'}
                         </p>
                         <p className="text-sm text-gray-600">
                           {new Date(call.start_ts).toLocaleString()}
@@ -305,13 +277,13 @@ const CallHistoryPageNew = () => {
                     {/* Details Row */}
                     <div className="flex items-center gap-6 text-xs text-gray-600">
                       <div>
-                        <span className="font-medium">Sector:</span> {call.sector || 'N/A'}
+                        <span className="font-medium">From:</span> {call.phone_from || 'N/A'}
                       </div>
                       <div>
-                        <span className="font-medium">Agent:</span> {call.agent_type || 'N/A'}
+                        <span className="font-medium">To:</span> {call.phone_to || 'N/A'}
                       </div>
                       <div>
-                        <span className="font-medium">Outcome:</span> {call.outcome || 'N/A'}
+                        <span className="font-medium">Satisfaction:</span> {call.customer_satisfaction || 'N/A'}
                       </div>
                     </div>
                   </div>
@@ -387,12 +359,12 @@ const CallHistoryPageNew = () => {
               {/* Call Header */}
               <div className="grid grid-cols-2 gap-4 pb-4 border-b border-gray-200">
                 <div>
-                  <p className="text-sm text-gray-600 font-medium">Caller</p>
-                  <p className="text-lg font-semibold">{selectedCall.customer_name || 'Unknown'}</p>
+                  <p className="text-sm text-gray-600 font-medium">From</p>
+                  <p className="text-lg font-semibold">{selectedCall.phone_from || 'Unknown'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 font-medium">Phone</p>
-                  <p className="text-lg font-semibold">{selectedCall.customer_phone || 'N/A'}</p>
+                  <p className="text-sm text-gray-600 font-medium">To</p>
+                  <p className="text-lg font-semibold">{selectedCall.phone_to || 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 font-medium">Date & Time</p>
@@ -407,41 +379,45 @@ const CallHistoryPageNew = () => {
               {/* Call Details */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 font-medium">Sector</p>
-                  <p className="text-base">{selectedCall.sector || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 font-medium">Agent Type</p>
-                  <p className="text-base">{selectedCall.agent_type || 'N/A'}</p>
-                </div>
-                <div>
                   <p className="text-sm text-gray-600 font-medium">Status</p>
                   <p className="text-base">{getStatusText(selectedCall)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 font-medium">Outcome</p>
-                  <p className="text-base">{selectedCall.outcome || 'N/A'}</p>
+                  <p className="text-sm text-gray-600 font-medium">Satisfaction</p>
+                  <p className="text-base">{selectedCall.customer_satisfaction || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 font-medium">Call ID</p>
+                  <p className="text-base font-mono text-xs">{selectedCall.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 font-medium">Recording URL</p>
+                  <p className="text-base">{selectedCall.recording_url ? '✓ Available' : 'N/A'}</p>
                 </div>
               </div>
 
               {/* Transcript */}
-              {selectedCall.transcript && (
+              {selectedCall.transcript_full && (
                 <div className="pt-4 border-t border-gray-200">
                   <p className="text-sm text-gray-600 font-medium mb-2">Transcript</p>
-                  <p className="text-gray-700 bg-gray-50 p-4 rounded text-sm">{selectedCall.transcript}</p>
+                  <p className="text-gray-700 bg-gray-50 p-4 rounded text-sm">{selectedCall.transcript_full}</p>
                 </div>
               )}
 
               {/* Action Buttons */}
               <div className="pt-4 border-t border-gray-200 flex gap-2">
-                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition">
-                  <Play size={16} className="inline mr-2" />
-                  Play Recording
-                </button>
-                <button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 rounded-lg transition">
-                  <FileText size={16} className="inline mr-2" />
-                  View Transcript
-                </button>
+                {selectedCall.recording_url && (
+                  <button onClick={() => window.open(selectedCall.recording_url, '_blank')} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition">
+                    <Play size={16} className="inline mr-2" />
+                    Play Recording
+                  </button>
+                )}
+                {selectedCall.transcript_full && (
+                  <button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 rounded-lg transition">
+                    <FileText size={16} className="inline mr-2" />
+                    View Transcript
+                  </button>
+                )}
               </div>
             </div>
           </div>
