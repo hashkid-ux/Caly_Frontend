@@ -1,160 +1,165 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { TrendingUp, AlertCircle, CheckCircle, Clock, Download } from 'lucide-react';
 import KPICard from '../UI/KPICard';
 import FilterBar from '../UI/FilterBar';
 import PageHeader from '../PageHeader';
 import { useAuth } from '../../context/AuthContext';
+import { useAnalytics } from '../../hooks/useRealData';
 
 /**
- * Redesigned Analytics Dashboard
- * - Professional KPI cards with trends
- * - 6 interactive charts
- * - Sector-specific metrics
- * - Export functionality
- * - Real-time updates
+ * Analytics Dashboard - REAL DATA FROM BACKEND
+ * - Fetches KPIs from /api/analytics/kpis endpoint
+ * - All data comes from database (calls, agents, teams tables)
+ * - NO mock data used anywhere
+ * - Real metrics: calls today, duration, completion rate, error rate
+ * - Real charts: volume trend, agent performance, sector breakdown, outcomes
  */
 const AnalyticsPageNew = () => {
   const { user } = useAuth();
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-
-  const [analyticsData, setAnalyticsData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [sector, setSector] = useState('all');
-  const [dateRange, setDateRange] = useState('month');
-  const [error, setError] = useState(null);
+  const [days, setDays] = useState(7);
 
-  // Sample data for demo (replace with actual API calls)
-  const mockAnalyticsData = {
-    kpis: {
-      callsToday: { value: 287, trend: 23, unit: '', icon: 'Phone' },
-      avgDuration: { value: '4m 32s', trend: -5, unit: '', icon: 'Clock' },
-      completionRate: { value: '98.5%', trend: 1.2, unit: '', icon: 'CheckCircle' },
-      errorRate: { value: '1.5%', trend: -0.3, unit: '', icon: 'AlertCircle' }
-    },
-    callVolume: [
-      { date: 'Nov 23', calls: 234, target: 250 },
-      { date: 'Nov 24', calls: 267, target: 250 },
-      { date: 'Nov 25', calls: 234, target: 250 },
-      { date: 'Nov 26', calls: 289, target: 250 },
-      { date: 'Nov 27', calls: 243, target: 250 },
-      { date: 'Nov 28', calls: 276, target: 250 },
-      { date: 'Nov 29', calls: 287, target: 250 }
-    ],
-    agentPerformance: [
-      { name: 'Dr. Sarah Kumar', successRate: 99.4, calls: 87 },
-      { name: 'Nurse Lisa Patel', successRate: 97.1, calls: 64 },
-      { name: 'Rajesh Sharma', successRate: 96.8, calls: 143 },
-      { name: 'James Wilson', successRate: 95.2, calls: 34 },
-      { name: 'Maria Garcia', successRate: 94.1, calls: 56 }
-    ],
-    sectorBreakdown: [
-      { name: 'E-Commerce', value: 2840, color: '#FFA500' },
-      { name: 'Healthcare', value: 1234, color: '#EF4444' },
-      { name: 'Support', value: 890, color: '#1E40AF' },
-      { name: 'Logistics', value: 756, color: '#4B5563' },
-      { name: 'Real Estate', value: 543, color: '#8B4513' },
-      { name: 'Others', value: 437, color: '#6B7280' }
-    ],
-    callOutcomes: [
-      { name: 'Successful', value: 2847, color: '#10B981' },
-      { name: 'Escalated', value: 143, color: '#F59E0B' },
-      { name: 'Failed', value: 27, color: '#EF4444' }
-    ],
-    sectorMetrics: {
-      ecommerce: { conversion: 2.4, orders: 143, aov: '₹2,450', returns: 3.2 },
-      healthcare: { appointments: 87, noshow: 3, rating: 4.8, wait: '2.3m' },
-      logistics: { delivery: 98.7, avgTime: '24.5h', exceptions: 1.2, satisfaction: 4.6 },
-      fintech: { success: 99.2, fraud: 0.8, processing: '2.1s', trust: 4.9 }
-    },
-    alerts: [
-      { type: 'error', message: 'High error rate on Healthcare sector (12%)', icon: 'AlertCircle' },
-      { type: 'warning', message: 'Support team has high wait times (avg 4.2min)', icon: 'Clock' },
-      { type: 'success', message: 'Fintech sector performing well! (99.2% success)', icon: 'CheckCircle' }
-    ]
-  };
+  // Fetch real analytics data from backend
+  const { data: analyticsResponse, isLoading, error } = useAnalytics(
+    user?.client_id,
+    { sector: sector === 'all' ? null : sector, days: parseInt(days) }
+  );
 
-  useEffect(() => {
-    // Fetch analytics data from API
-    const fetchAnalytics = async () => {
-      try {
-        setLoading(true);
-        // Replace with actual API call
-        // const response = await fetch(`${API_BASE_URL}/api/analytics/dashboard`, {...});
-        // const data = await response.json();
-        // setAnalyticsData(data);
-        setAnalyticsData(mockAnalyticsData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const analyticsData = analyticsResponse?.data;
 
-    fetchAnalytics();
-  }, [sector, dateRange]);
+  if (isLoading) {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-gray-50 min-h-screen">
+        <PageHeader title="📊 Analytics Dashboard" description="Real-time performance metrics" />
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <p className="text-red-800">Error loading analytics: {error.message}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleExport = () => {
-    // Export to CSV
-    const csv = 'Metric,Value,Trend\n';
-    // ... implement CSV generation
-    console.log('Exporting analytics...');
+    // Export analytics to CSV
+    const headers = ['Metric', 'Value', 'Trend'];
+    const rows = [
+      ['Calls Today', analyticsData?.callsToday || 0, 'N/A'],
+      ['Avg Duration (min)', analyticsData?.avgDuration || 0, 'N/A'],
+      ['Completion Rate (%)', analyticsData?.completionRate || 0, 'N/A'],
+      ['Error Rate (%)', analyticsData?.errorRate || 0, 'N/A']
+    ];
+
+    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analytics-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
   };
 
-  if (!user) return <div className="p-8 text-center">Please log in to view analytics</div>;
-
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <PageHeader title="📊 Analytics Dashboard" description="Track your call metrics and performance" />
+    <div className="bg-gray-50 min-h-screen pb-8">
+      <PageHeader 
+        title="📊 Analytics Dashboard" 
+        description="Real-time performance metrics from backend" 
+      />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Filters */}
-        <FilterBar
-          onSectorChange={setSector}
-          onDateRangeChange={setDateRange}
-          onExport={handleExport}
-          showSectorFilter={true}
-          showDatePicker={true}
-          showExportButton={true}
-        />
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Sector</label>
+              <select
+                value={sector}
+                onChange={(e) => setSector(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Sectors</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="ecommerce">E-Commerce</option>
+                <option value="logistics">Logistics</option>
+                <option value="fintech">Fintech</option>
+                <option value="realestate">Real Estate</option>
+              </select>
+            </div>
 
-        {/* KPI Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
+              <select
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="7">Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <button
+                onClick={handleExport}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg flex items-center justify-center gap-2 transition"
+              >
+                <Download size={18} />
+                Export CSV
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <KPICard
             title="Calls Today"
-            value={analyticsData?.kpis.callsToday.value || 0}
-            trend={analyticsData?.kpis.callsToday.trend || 0}
-            trendLabel="vs yesterday"
-            status="success"
+            value={analyticsData?.callsToday || 0}
+            trend={analyticsData?.callsTrendPercent || 0}
+            trendLabel="increase"
+            status={analyticsData?.callsToday > 200 ? 'success' : 'warning'}
             color="blue"
-            loading={loading}
+            loading={isLoading}
           />
           <KPICard
             title="Avg Duration"
-            value={analyticsData?.kpis.avgDuration.value || '0s'}
-            trend={analyticsData?.kpis.avgDuration.trend || 0}
-            trendLabel="improvement"
-            status="success"
-            color="green"
-            loading={loading}
+            value={analyticsData?.avgDuration ? `${Math.round(analyticsData.avgDuration)}m` : '0m'}
+            trend={analyticsData?.durationTrendPercent || 0}
+            trendLabel="decrease"
+            status="info"
+            color="purple"
+            loading={isLoading}
           />
           <KPICard
             title="Completion Rate"
-            value={analyticsData?.kpis.completionRate.value || '0%'}
-            trend={analyticsData?.kpis.completionRate.trend || 0}
+            value={analyticsData?.completionRate ? `${analyticsData.completionRate.toFixed(1)}%` : '0%'}
+            trend={analyticsData?.completionTrendPercent || 0}
             trendLabel="increase"
-            status="success"
-            color="purple"
-            loading={loading}
+            status={analyticsData?.completionRate > 95 ? 'success' : 'warning'}
+            color="green"
+            loading={isLoading}
           />
           <KPICard
             title="Error Rate"
-            value={analyticsData?.kpis.errorRate.value || '0%'}
-            trend={analyticsData?.kpis.errorRate.trend || 0}
+            value={analyticsData?.errorRate ? `${analyticsData.errorRate.toFixed(1)}%` : '0%'}
+            trend={analyticsData?.errorTrendPercent || 0}
             trendLabel="decrease"
-            status={analyticsData?.kpis.errorRate.value > 2 ? 'danger' : 'warning'}
+            status={analyticsData?.errorRate > 5 ? 'danger' : 'success'}
             color="red"
-            loading={loading}
+            loading={isLoading}
           />
         </div>
 
@@ -162,42 +167,56 @@ const AnalyticsPageNew = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Call Volume Trend */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">📈 Call Volume Trend (30 days)</h3>
-            {analyticsData?.callVolume && (
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">📈 Call Volume Trend</h3>
+            {analyticsData?.dailyTrend && analyticsData.dailyTrend.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={analyticsData.callVolume}>
+                <LineChart data={analyticsData.dailyTrend}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="calls" stroke="#3B82F6" strokeWidth={2} dot={{ r: 4 }} />
-                  <Line type="monotone" dataKey="target" stroke="#10B981" strokeDasharray="5 5" strokeWidth={2} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="calls" 
+                    stroke="#3B82F6" 
+                    strokeWidth={2} 
+                    dot={{ r: 4 }} 
+                    name="Calls"
+                  />
                 </LineChart>
               </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center text-gray-500">
+                No data available
+              </div>
             )}
           </div>
 
-          {/* Agent Performance */}
+          {/* Top Agent Performance */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-800">👥 Top Agent Performance</h3>
-            {analyticsData?.agentPerformance && (
+            {analyticsData?.topAgents && analyticsData.topAgents.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={analyticsData.agentPerformance} layout="vertical">
+                <BarChart data={analyticsData.topAgents} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis width={120} dataKey="name" type="category" tick={{ fontSize: 12 }} />
+                  <XAxis type="number" domain={[0, 100]} />
+                  <YAxis width={100} dataKey="agent_type" type="category" tick={{ fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="successRate" fill="#10B981" radius={[0, 8, 8, 0]} />
+                  <Bar dataKey="success_rate" fill="#10B981" radius={[0, 8, 8, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center text-gray-500">
+                No agent data available
+              </div>
             )}
           </div>
 
           {/* Sector Breakdown */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-800">🏢 Calls by Sector</h3>
-            {analyticsData?.sectorBreakdown && (
+            {analyticsData?.sectorBreakdown && analyticsData.sectorBreakdown.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
@@ -205,122 +224,101 @@ const AnalyticsPageNew = () => {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
+                    label={({ sector, percentage }) => `${sector}: ${percentage.toFixed(1)}%`}
                     outerRadius={80}
                     fill="#8884d8"
-                    dataKey="value"
+                    dataKey="count"
                   >
                     {analyticsData.sectorBreakdown.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={['#FFA500', '#EF4444', '#1E40AF', '#4B5563', '#8B4513', '#6B7280'][index % 6]} 
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center text-gray-500">
+                No sector data available
+              </div>
             )}
           </div>
 
           {/* Call Outcomes */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-800">📊 Call Outcomes</h3>
-            {analyticsData?.callOutcomes && (
+            {analyticsData?.outcomes && analyticsData.outcomes.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
-                    data={analyticsData.callOutcomes}
+                    data={analyticsData.outcomes}
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
                     outerRadius={100}
                     fill="#8884d8"
                     paddingAngle={5}
-                    dataKey="value"
+                    dataKey="count"
                   >
-                    {analyticsData.callOutcomes.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
+                    {analyticsData.outcomes.map((entry, index) => {
+                      const colors = ['#10B981', '#F59E0B', '#EF4444'];
+                      return <Cell key={`cell-${index}`} fill={colors[index % 3]} />;
+                    })}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip formatter={(value) => `${value} calls`} />
                 </PieChart>
               </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center text-gray-500">
+                No outcome data available
+              </div>
             )}
           </div>
         </div>
 
-        {/* Sector-Specific Metrics */}
+        {/* Hourly Trend */}
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 mb-8">
-          <h3 className="text-lg font-semibold mb-6 text-gray-800">🎯 Sector-Specific Metrics</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* E-Commerce */}
-            <div className="border border-orange-200 rounded-lg p-4 bg-orange-50">
-              <h4 className="font-semibold text-orange-900 mb-3">🛒 E-Commerce</h4>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Conversion:</span> {analyticsData?.sectorMetrics.ecommerce.conversion}%</p>
-                <p><span className="font-medium">Orders:</span> {analyticsData?.sectorMetrics.ecommerce.orders}</p>
-                <p><span className="font-medium">AOV:</span> {analyticsData?.sectorMetrics.ecommerce.aov}</p>
-                <p><span className="font-medium">Returns:</span> {analyticsData?.sectorMetrics.ecommerce.returns}%</p>
-              </div>
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">⏰ Hourly Call Volume (Last 24h)</h3>
+          {analyticsData?.hourlyTrend && analyticsData.hourlyTrend.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={analyticsData.hourlyTrend}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="calls" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-gray-500">
+              No hourly data available
             </div>
-
-            {/* Healthcare */}
-            <div className="border border-red-200 rounded-lg p-4 bg-red-50">
-              <h4 className="font-semibold text-red-900 mb-3">🏥 Healthcare</h4>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Appointments:</span> {analyticsData?.sectorMetrics.healthcare.appointments}</p>
-                <p><span className="font-medium">No-show:</span> {analyticsData?.sectorMetrics.healthcare.noshow}%</p>
-                <p><span className="font-medium">Rating:</span> {analyticsData?.sectorMetrics.healthcare.rating}★</p>
-                <p><span className="font-medium">Avg Wait:</span> {analyticsData?.sectorMetrics.healthcare.wait}</p>
-              </div>
-            </div>
-
-            {/* Logistics */}
-            <div className="border border-gray-400 rounded-lg p-4 bg-gray-50">
-              <h4 className="font-semibold text-gray-900 mb-3">🚚 Logistics</h4>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Delivery:</span> {analyticsData?.sectorMetrics.logistics.delivery}%</p>
-                <p><span className="font-medium">Avg Time:</span> {analyticsData?.sectorMetrics.logistics.avgTime}</p>
-                <p><span className="font-medium">Exceptions:</span> {analyticsData?.sectorMetrics.logistics.exceptions}%</p>
-                <p><span className="font-medium">Satisfaction:</span> {analyticsData?.sectorMetrics.logistics.satisfaction}★</p>
-              </div>
-            </div>
-
-            {/* Fintech */}
-            <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
-              <h4 className="font-semibold text-purple-900 mb-3">💰 Fintech</h4>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Success:</span> {analyticsData?.sectorMetrics.fintech.success}%</p>
-                <p><span className="font-medium">Fraud:</span> {analyticsData?.sectorMetrics.fintech.fraud}%</p>
-                <p><span className="font-medium">Processing:</span> {analyticsData?.sectorMetrics.fintech.processing}</p>
-                <p><span className="font-medium">Trust Score:</span> {analyticsData?.sectorMetrics.fintech.trust}★</p>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* Alerts & Anomalies */}
+        {/* Summary Stats */}
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold mb-6 text-gray-800">🔔 Alerts & Anomalies</h3>
-          <div className="space-y-3">
-            {analyticsData?.alerts.map((alert, idx) => (
-              <div
-                key={idx}
-                className={`
-                  flex items-start p-4 rounded-lg border-l-4
-                  ${alert.type === 'error' ? 'bg-red-50 border-l-red-500 text-red-800' : ''}
-                  ${alert.type === 'warning' ? 'bg-yellow-50 border-l-yellow-500 text-yellow-800' : ''}
-                  ${alert.type === 'success' ? 'bg-green-50 border-l-green-500 text-green-800' : ''}
-                `}
-              >
-                <div className="mr-3 mt-1">
-                  {alert.type === 'error' && <AlertCircle size={20} />}
-                  {alert.type === 'warning' && <Clock size={20} />}
-                  {alert.type === 'success' && <CheckCircle size={20} />}
-                </div>
-                <div>
-                  <p className="font-medium">{alert.message}</p>
-                </div>
-              </div>
-            ))}
+          <h3 className="text-lg font-semibold mb-6 text-gray-800">📋 Summary Statistics</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="border-l-4 border-blue-500 pl-4">
+              <p className="text-gray-600 text-sm font-medium">Total Calls</p>
+              <p className="text-3xl font-bold text-gray-800">{analyticsData?.totalCalls || 0}</p>
+              <p className="text-gray-500 text-xs mt-1">All calls in period</p>
+            </div>
+
+            <div className="border-l-4 border-green-500 pl-4">
+              <p className="text-gray-600 text-sm font-medium">Successful Calls</p>
+              <p className="text-3xl font-bold text-gray-800">{analyticsData?.successfulCalls || 0}</p>
+              <p className="text-gray-500 text-xs mt-1">Resolved successfully</p>
+            </div>
+
+            <div className="border-l-4 border-red-500 pl-4">
+              <p className="text-gray-600 text-sm font-medium">Failed Calls</p>
+              <p className="text-3xl font-bold text-gray-800">{analyticsData?.failedCalls || 0}</p>
+              <p className="text-gray-500 text-xs mt-1">Escalated or failed</p>
+            </div>
           </div>
         </div>
       </div>
