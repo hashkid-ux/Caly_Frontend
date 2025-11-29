@@ -99,6 +99,14 @@ export const AuthProvider = ({ children }) => {
         const refreshToken = localStorage.getItem('refreshToken');
         const userData = localStorage.getItem('user');
         
+        // ✅ FIX: Restore onboarding status from localStorage immediately
+        // This prevents OnboardingGuard from redirecting before backend verification completes
+        const savedOnboardingStatus = localStorage.getItem('onboardingCompleted');
+        if (savedOnboardingStatus !== null) {
+          setOnboardingCompleted(JSON.parse(savedOnboardingStatus));
+          logger.debug('✅ [Auth] Restored onboarding status from localStorage:', JSON.parse(savedOnboardingStatus));
+        }
+        
         if (accessToken) {
           // ✅ PHASE 3 FIX 3.2: Check if token is expired BEFORE using it
           if (isTokenExpired(accessToken)) {
