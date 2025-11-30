@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, User, Building, AlertCircle, CheckCircle, Loader, Eye, EyeOff, Chrome } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { STORAGE_KEYS } from '../config/storageKeys';
 
 if (!process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production') {
   throw new Error('❌ CRITICAL: REACT_APP_API_URL environment variable is required in production. Check your .env.production file.');
@@ -62,8 +63,8 @@ const RegisterPage = () => {
   };
 
   const handleGoogleSignup = () => {
-    // Redirect to Google OAuth
-    window.location.href = `${API_BASE_URL}/api/auth/google/callback`;
+    // Redirect to backend OAuth endpoint to START OAuth flow (not the callback!)
+    window.location.href = `${API_BASE_URL}/api/auth/google`;
   };
 
   const handleInputChange = (e) => {
@@ -159,19 +160,22 @@ const RegisterPage = () => {
         return;
       }
 
-      // ✅ NEW: Save tokens and user data if provided, then redirect to onboarding
-      if (data.token) {
-        localStorage.setItem('accessToken', data.token);
+      // ✅ FIX: Save tokens if provided (now returned from email verification)
+      if (data.accessToken) {
+        localStorage.setItem(STORAGE_KEYS.accessToken, data.accessToken);
       }
       if (data.refreshToken) {
-        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem(STORAGE_KEYS.refreshToken, data.refreshToken);
       }
       if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(data.user));
+        localStorage.setItem(STORAGE_KEYS.userId, data.user.id);
+        localStorage.setItem(STORAGE_KEYS.clientId, data.user.clientId);
       }
 
-      // Redirect to onboarding instead of login
-      navigate('/onboarding');
+      // ✅ Direct redirect to onboarding - no need to login again!
+      localStorage.setItem(STORAGE_KEYS.onboardingCompleted, 'false');
+      navigate('/onboarding', { replace: true });
 
     } catch (error) {
       setError('Connection error. Please try again.');

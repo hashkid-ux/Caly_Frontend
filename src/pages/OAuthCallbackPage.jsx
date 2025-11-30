@@ -15,7 +15,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Loader, AlertCircle } from 'lucide-react';
-import logger from '../utils/logger'; // ✅ PHASE 2 FIX 5: Environment-aware logging
+import logger from '../utils/logger';
+import { STORAGE_KEYS } from '../config/storageKeys';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
@@ -62,8 +63,8 @@ const OAuthCallbackPage = () => {
         }
 
         // Step 1: Save tokens to localStorage immediately
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem(STORAGE_KEYS.accessToken, accessToken);
+        localStorage.setItem(STORAGE_KEYS.refreshToken, refreshToken);
         // ✅ PHASE 2 FIX 5: Use environment-aware logger
         logger.debug('✅ [OAuth] Both tokens saved to localStorage');
 
@@ -79,11 +80,11 @@ const OAuthCallbackPage = () => {
             expiresIn: decoded.exp - Math.floor(Date.now() / 1000) + 's',
           });
 
-          // ✅ FIX: Save clientId separately so it can be accessed by name
-          localStorage.setItem('userId', decoded.userId);
-          localStorage.setItem('clientId', decoded.clientId);  // ✅ CRITICAL: Save as separate key
+          // ✅ FIX: Save userId and clientId separately using centralized keys
+          localStorage.setItem(STORAGE_KEYS.userId, decoded.userId);
+          localStorage.setItem(STORAGE_KEYS.clientId, decoded.clientId);  // ✅ CRITICAL: Consistent key name
           
-          localStorage.setItem('tokenData', JSON.stringify({
+          localStorage.setItem(STORAGE_KEYS.tokenData, JSON.stringify({
             userId: decoded.userId,
             email: decoded.email,
             clientId: decoded.clientId,
@@ -110,12 +111,12 @@ const OAuthCallbackPage = () => {
             
             if (completed) {
               // Onboarding done, go to dashboard
-              localStorage.setItem('onboardingCompleted', 'true');
+              localStorage.setItem(STORAGE_KEYS.onboardingCompleted, 'true');
               logger.debug('✅ [OAuth] Onboarding completed, redirecting to dashboard');
               navigate('/dashboard', { replace: true });
             } else {
               // Onboarding not done, go to onboarding
-              localStorage.setItem('onboardingCompleted', 'false');
+              localStorage.setItem(STORAGE_KEYS.onboardingCompleted, 'false');
               logger.debug('✅ [OAuth] Onboarding not completed, redirecting to onboarding');
               navigate('/onboarding', { replace: true });
             }

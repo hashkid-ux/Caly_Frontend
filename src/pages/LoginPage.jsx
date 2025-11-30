@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, AlertCircle, Loader, Chrome } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import logger from '../utils/logger'; // ✅ PHASE 2 FIX 5: Environment-aware logging
+import logger from '../utils/logger';
+import { STORAGE_KEYS } from '../config/storageKeys';
 
 if (!process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production') {
   throw new Error('❌ CRITICAL: REACT_APP_API_URL environment variable is required in production. Check your .env.production file.');
@@ -38,8 +39,8 @@ const LoginPage = () => {
   }, [searchParams, navigate]);
 
   const handleGoogleLogin = () => {
-    // Redirect to backend OAuth endpoint
-    window.location.href = `${API_BASE_URL}/api/auth/google/callback`;
+    // Redirect to backend OAuth endpoint to START OAuth flow (not the callback!)
+    window.location.href = `${API_BASE_URL}/api/auth/google`;
   };
 
   const handleLogin = async (e) => {
@@ -77,16 +78,16 @@ const LoginPage = () => {
         return;
       }
 
-      // Store tokens
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
+      // Store tokens using centralized keys
+      localStorage.setItem(STORAGE_KEYS.accessToken, data.accessToken);
+      localStorage.setItem(STORAGE_KEYS.refreshToken, data.refreshToken);
       
       if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
+        localStorage.setItem(STORAGE_KEYS.rememberedEmail, email);
       }
 
       // Store user info
-      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(data.user));
 
       // ✅ NEW: Check onboarding status before redirecting
       try {
@@ -100,11 +101,11 @@ const LoginPage = () => {
           
           if (completed) {
             // Onboarding done, go to dashboard
-            localStorage.setItem('onboardingCompleted', 'true');
+            localStorage.setItem(STORAGE_KEYS.onboardingCompleted, 'true');
             navigate('/dashboard');
           } else {
             // Onboarding not done, go to onboarding
-            localStorage.setItem('onboardingCompleted', 'false');
+            localStorage.setItem(STORAGE_KEYS.onboardingCompleted, 'false');
             navigate('/onboarding');
           }
         } else {
