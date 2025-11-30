@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [dailyData, setDailyData] = useState([]);
   const [agentPerformance, setAgentPerformance] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -42,9 +43,10 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [statsRes, analyticsRes] = await Promise.all([
+      const [statsRes, analyticsRes, teamsRes] = await Promise.all([
         axiosInstance.get('/api/analytics/comprehensive?range=today'),
-        axiosInstance.get('/api/analytics/comprehensive?range=7d')
+        axiosInstance.get('/api/analytics/comprehensive?range=7d'),
+        axiosInstance.get('/api/teams').catch(() => ({ data: [] })) // Teams may not be available
       ]);
 
       if (statsRes.data) {
@@ -67,6 +69,11 @@ const Dashboard = () => {
           success: a.success_rate || 0
         }));
         setAgentPerformance(agents);
+      }
+
+      // Load team members
+      if (teamsRes.data && teamsRes.data.data) {
+        setTeamMembers(teamsRes.data.data.slice(0, 5)); // Show top 5
       }
 
       setError('');
@@ -256,6 +263,48 @@ const Dashboard = () => {
                 <p className={`${isDark ? 'text-gray-500' : 'text-gray-500'} text-center py-8`}>No agent data available yet</p>
               )}
             </CollapsibleSection>
+
+            {/* TEAM MEMBERS - New section */}
+            {teamMembers.length > 0 && (
+              <CollapsibleSection
+                title={`Your Team (${teamMembers.length})`}
+                isOpen={expandedSections.performance}
+                onToggle={() => toggleSection('performance')}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {teamMembers.map((member, idx) => (
+                    <div key={idx} className={`p-4 ${isDark ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Users className="w-4 h-4" />
+                        <p className={`font-medium text-sm ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>{member.title}</p>
+                      </div>
+                      <div className="space-y-2 text-xs">
+                        <div>
+                          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Calls This Week</p>
+                          <p className={`text-lg font-bold ${isDark ? 'text-green-400' : 'text-green-600'}`}>{member.calls_this_week || 0}</p>
+                        </div>
+                        <div>
+                          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Success Rate</p>
+                          <p className={`text-lg font-bold ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>{((member.success_rate || 0) * 100).toFixed(0)}%</p>
+                        </div>
+                        <div>
+                          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Score</p>
+                          <p className={`text-lg font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`}>{(member.performance_score || 0).toFixed(0)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <button 
+                    onClick={() => navigate('/teams')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${isDark ? 'bg-blue-900 hover:bg-blue-800 text-blue-100' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                  >
+                    Manage Team
+                  </button>
+                </div>
+              </CollapsibleSection>
+            )}
 
             {/* QUICK ACTIONS */}
             <div className={`${isDark ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30' : 'bg-gradient-to-r from-blue-50 to-purple-50'} rounded-lg p-6 border ${isDark ? 'border-blue-800/30' : 'border-blue-200'}`}>

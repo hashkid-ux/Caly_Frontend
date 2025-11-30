@@ -1,0 +1,353 @@
+/* QAMetricsPanel.css - QA Metrics display styling */
+
+.qa-metrics-panel {
+  padding: 20px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.error-state {
+  padding: 20px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c33;
+  text-align: center;
+}
+
+/* Summary Stats */
+.metrics-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-stat {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--primary-color);
+  color: white;
+  flex-shrink: 0;
+}
+
+.stat-icon.excellent {
+  background: #16a34a;
+}
+
+.stat-icon.warning {
+  background: #dc2626;
+}
+
+.stat-icon.info {
+  background: #2563eb;
+}
+
+.stat-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-label {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.stat-value {
+  margin: 4px 0 0 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stat-value.score-excellent {
+  color: #16a34a;
+}
+
+.stat-value.score-good {
+  color: #2563eb;
+}
+
+.stat-value.score-fair {
+  color: #ea580c;
+}
+
+.stat-value.score-poor {
+  color: #dc2626;
+}
+
+.stat-value.score-failing {
+  color: #991b1b;
+}
+
+/* Metrics Controls */
+.metrics-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-controls label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sort-controls select {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Metrics Table */
+.metrics-table-container {
+  overflow-x: auto;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.metrics-table thead {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.metrics-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.metrics-table th.score-col {
+  text-align: center;
+}
+
+.metrics-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.metrics-table tbody tr:hover {
+  background: var(--bg-primary);
+}
+
+.member-info {
+  min-width: 200px;
+}
+
+.member-name {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.member-email {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.score-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 50px;
+}
+
+.score-badge.score-excellent {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.score-badge.score-good {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.score-badge.score-fair {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.score-badge.score-poor {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.score-badge.score-failing {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+.centered {
+  text-align: center;
+}
+
+.flagged-badge,
+.coaching-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.flagged-badge {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.coaching-badge {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+/* Performance Breakdown */
+.performance-breakdown {
+  background: var(--bg-primary);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.performance-breakdown h4 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.category-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-stat label {
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #06b6d4);
+  transition: width 0.3s ease;
+}
+
+.progress-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Dark mode */
+:root[data-theme='dark'] .qa-metrics-panel {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #262626;
+  --text-primary: #ffffff;
+  --text-secondary: #999999;
+  --border-color: #404040;
+  --primary-color: #3b82f6;
+}
+
+@media (max-width: 768px) {
+  .metrics-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-table-container {
+    font-size: 12px;
+  }
+
+  .metrics-table th,
+  .metrics-table td {
+    padding: 8px 12px;
+  }
+
+  .member-info {
+    min-width: auto;
+  }
+
+  .metrics-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sort-controls {
+    width: 100%;
+  }
+
+  .sort-controls select {
+    flex: 1;
+  }
+}

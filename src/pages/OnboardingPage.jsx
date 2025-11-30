@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SectorSelector from '../components/SectorSelector';
 import { 
-  Building, Phone, CheckCircle, AlertCircle, Loader, Zap, ArrowRight, Settings, ArrowLeft
+  Building, Phone, CheckCircle, AlertCircle, Loader, Zap, ArrowRight, Settings, ArrowLeft, Users
 } from 'lucide-react';
 
 if (!process.env.REACT_APP_API_URL && process.env.NODE_ENV === 'production') {
@@ -16,7 +16,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const { user, setOnboardingCompletedStatus } = useAuth();
-  const [step, setStep] = useState(0); // 0 = sector selection, 1 = form, 2 = success
+  const [step, setStep] = useState(0); // 0 = sector, 1 = form, 2 = team setup, 3 = success
   const [selectedSector, setSelectedSector] = useState('ecommerce'); // ✅ PHASE 2: Sector selection
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,6 +26,13 @@ const OnboardingPage = () => {
   const [formData, setFormData] = useState({
     companyName: user?.companyName || '',
     phoneNumber: '',
+  });
+
+  // Team member creation
+  const [teamMember, setTeamMember] = useState({
+    email: '',
+    title: '',
+    role: 'agent'
   });
 
   const updateField = (field, value) => {
@@ -88,8 +95,43 @@ const OnboardingPage = () => {
         return;
       }
 
-      // Show success screen
+      // Show team setup screen instead of immediate success
       setStep(2);
+
+    } catch (err) {
+      setError('Connection error. Please try again.');
+      console.error('Onboarding error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle team member creation
+  const handleCreateTeamMember = async () => {
+    if (!teamMember.email || !teamMember.title) {
+      setError('Email and name required');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/teams/members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify(teamMember)
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || 'Failed to create team member');
+        return;
+      }
+
+      // Go to success screen
+      setStep(3);
       
       // Auto-redirect to dashboard after 3 seconds
       setTimeout(() => {
@@ -99,7 +141,7 @@ const OnboardingPage = () => {
 
     } catch (err) {
       setError('Connection error. Please try again.');
-      console.error('Onboarding error:', err);
+      console.error('Team creation error:', err);
     } finally {
       setLoading(false);
     }
@@ -285,8 +327,110 @@ const OnboardingPage = () => {
     );
   }
 
-  // Step 2: Success Screen
+  // Step 2: Team Member Setup
   if (step === 2) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-4 flex items-center justify-center">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Add Your Team</h1>
+            <p className="text-gray-600 dark:text-gray-400">Create your first team member to handle customer interactions</p>
+          </div>
+
+          {/* Form Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-6">
+            {/* Error */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                <span className="text-red-800 dark:text-red-300 text-sm">{error}</span>
+              </div>
+            )}
+
+            {/* Full Name */}
+            <div className="mb-5">
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                Team Member Name *
+              </label>
+              <input
+                type="text"
+                value={teamMember.title}
+                onChange={(e) => setTeamMember({ ...teamMember, title: e.target.value })}
+                placeholder="e.g., Priya Sharma"
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 transition-colors dark:bg-gray-700 dark:text-white"
+                disabled={loading}
+              />
+            </div>
+
+            {/* Email */}
+            <div className="mb-5">
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                Email *
+              </label>
+              <input
+                type="email"
+                value={teamMember.email}
+                onChange={(e) => setTeamMember({ ...teamMember, email: e.target.value })}
+                placeholder="priya@company.com"
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 transition-colors dark:bg-gray-700 dark:text-white"
+                disabled={loading}
+              />
+            </div>
+
+            {/* Role */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                Role
+              </label>
+              <select
+                value={teamMember.role}
+                onChange={(e) => setTeamMember({ ...teamMember, role: e.target.value })}
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:border-purple-500 transition-colors dark:bg-gray-700 dark:text-white"
+                disabled={loading}
+              >
+                <option value="agent">Support Agent</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="manager">Manager</option>
+              </select>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-3">
+              <button
+                onClick={handleCreateTeamMember}
+                disabled={loading}
+                className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                {loading && <Loader className="w-4 h-4 animate-spin" />}
+                Create Team Member
+              </button>
+              <button
+                onClick={() => setStep(3)}
+                disabled={loading}
+                className="w-full py-3 border-2 border-gray-200 dark:border-gray-600 hover:border-gray-300 text-gray-700 dark:text-gray-300 font-semibold rounded-lg transition-colors"
+              >
+                Skip for Now
+              </button>
+            </div>
+          </div>
+
+          {/* Info */}
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+            You can add team members anytime from the Team Management page
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 3: Success Screen
+  if (step === 3) {
     return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-4 flex items-center justify-center">
       <div className="w-full max-w-md text-center">

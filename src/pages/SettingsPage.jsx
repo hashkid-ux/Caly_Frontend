@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
+import SectorSettingsForm from '../components/SectorSettingsForm';
 import {
   Settings, Save, AlertCircle, CheckCircle, Loader,
   Globe, Phone, Users, Lock, Key, Bell
@@ -27,6 +28,7 @@ const SettingsPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('company');
+  const [selectedSector, setSelectedSector] = useState(null);
 
   const [formData, setFormData] = useState({
     // Company Info
@@ -270,6 +272,7 @@ const SettingsPage = () => {
         <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow mb-6 ${isDark ? 'border-b border-gray-700' : 'border-b'}`}>
           <div className="flex overflow-x-auto">
             <Tab id="company" label="Company Info" icon={Users} />
+            <Tab id="sector" label="Sector Config" icon={Globe} />
             <Tab id="integrations" label="Integrations" icon={Globe} />
             <Tab id="business" label="Business Rules" icon={Settings} />
             <Tab id="channels" label="Channels" icon={Bell} />
@@ -340,6 +343,33 @@ const SettingsPage = () => {
                   </select>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Sector Configuration Tab */}
+          {activeTab === 'sector' && (
+            <div>
+              <h2 className={`text-lg font-bold ${isDark ? 'text-gray-100' : 'text-gray-900'} mb-4`}>Sector Configuration</h2>
+              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+                Configure sector-specific API credentials and settings
+              </p>
+
+              {user?.sector ? (
+                <SectorSettingsForm 
+                  sector={user.sector}
+                  onSave={() => {
+                    setSuccess('Sector configuration saved successfully!');
+                    setTimeout(() => setSuccess(''), 3000);
+                  }}
+                  loading={loading}
+                />
+              ) : (
+                <div className={`p-4 ${isDark ? 'bg-yellow-900/20 border-yellow-800' : 'bg-yellow-50 border-yellow-200'} border rounded-lg`}>
+                  <p className={`text-sm ${isDark ? 'text-yellow-300' : 'text-yellow-800'}`}>
+                    No sector assigned to your account. Please contact your administrator.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
