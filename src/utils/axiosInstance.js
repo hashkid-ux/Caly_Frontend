@@ -16,18 +16,20 @@ let refreshPromise = null;
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000, // 30 seconds (increased from 10s for better retry window)
+  withCredentials: true,  // ✅ SECURITY FIX: Send httpOnly cookies with all requests
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Add auth token to all requests
+// Add auth token to all requests (kept for backward compatibility)
+// ✅ SECURITY: Tokens are now in httpOnly cookies, no need to manually set Authorization header
+// Cookies are automatically sent by browser when credentials: 'include' is set
 axiosInstance.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // httpOnly cookies are automatically sent by the browser
+    // No need to manually set Authorization header
+    logger.debug('[AXIOS] Request to ' + config.url);
     return config;
   },
   error => Promise.reject(error)
@@ -70,39 +72,47 @@ axiosInstance.interceptors.response.use(
       return axiosInstance(originalRequest);
     }
 
-    // Handle 401 (token expired) - refresh token once
+    // Handle 401 (token expired) - refresh token once with proper locking
     if (error.response?.status === 401 && !originalRequest._tokenRefreshAttempted) {
       originalRequest._tokenRefreshAttempted = true;
 
       try {
+        // ✅ SECURITY FIX: Proper locking mechanism to prevent race condition
+        // All concurrent requests wait for the SAME refresh promise
         if (!refreshPromise) {
-          const refreshToken = localStorage.getItem('refreshToken');
-          
-          if (!refreshToken) {
-            // No refresh token, redirect to login
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            window.location.href = '/login?reason=session_expired';
-            return Promise.reject(error);
-          }
-
-          refreshPromise = axios.post(`${API_BASE_URL}/api/auth/refresh`, {
-            refreshToken,
-          });
+          logger.debug('[AXIOS] Starting token refresh...');
+          // ✅ SECURITY FIX: Refresh endpoint now uses httpOnly cookies
+          // No need to send refreshToken in body - it's in the httpOnly cookie
+          refreshPromise = axios.post(
+            `${API_BASE_URL}/api/auth/refresh`,
+            {},  // Empty body
+            { withCredentials: true }  // ✅ Send/receive httpOnly cookies
+          )
+            .then(response => {
+              logger.debug('[AXIOS] Token refresh successful');
+              return response;
+            })
+            .catch(err => {
+              logger.error('[AXIOS] Token refresh failed:', err.message);
+              throw err;
+            })
+            .finally(() => {
+              // Clear the refresh promise AFTER all concurrent requests have awaited it
+              refreshPromise = null;
+            });
         }
 
-        const response = await refreshPromise;
-        refreshPromise = null;
+        // ✅ SECURITY: Wait for refresh to complete (same promise for all concurrent requests)
+        await refreshPromise;
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
+        // ✅ SECURITY: Tokens are now in httpOnly cookies (not in response)
+        // Browser automatically handles cookie storage and sending
+        
+        // Retry original request with refreshed token (in httpOnly cookie)
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        refreshPromise = null;
+        logger.error('[AXIOS] Authentication failed - redirecting to login');
+        // Clear all auth data from localStorage and redirect to login
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');

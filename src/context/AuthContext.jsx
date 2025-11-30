@@ -255,9 +255,11 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (email, password) => {
     setError(null);
     try {
+      // ✅ SECURITY FIX: Use credentials: 'include' to send httpOnly cookies
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',  // ✅ SEND/RECEIVE httpOnly cookies
         body: JSON.stringify({ email, password })
       });
 
@@ -267,23 +269,19 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Save tokens and user data
-      const accessToken = data.token || data.accessToken;
-      if (!accessToken) {
-        throw new Error('No token received from server');
-      }
-
-      localStorage.setItem('accessToken', accessToken);
-      if (data.refreshToken) {
-        localStorage.setItem('refreshToken', data.refreshToken);
-      }
+      // ✅ SECURITY FIX: Tokens are now in httpOnly cookies (not in response)
+      // Frontend should NOT try to read the token from response
+      // Instead, browser automatically sends cookies with subsequent requests
+      
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user));
         setUser(data.user);
       }
 
-      setToken(accessToken);
-      logger.debug('✅ [Auth] Login successful');
+      // ✅ Set a flag that we're logged in (cookies are set, browser will send them)
+      // Use a session token to verify authentication on page reload
+      setToken('authenticated');  // Just a flag - actual token is in httpOnly cookie
+      logger.debug('✅ [Auth] Login successful - tokens set in httpOnly cookies');
 
       return { success: true, user: data.user };
     } catch (err) {
