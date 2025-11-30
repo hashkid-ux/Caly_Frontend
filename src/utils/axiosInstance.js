@@ -22,13 +22,21 @@ const axiosInstance = axios.create({
   }
 });
 
-// Add auth token to all requests (kept for backward compatibility)
-// ✅ SECURITY: Tokens are now in httpOnly cookies, no need to manually set Authorization header
+// Add auth token to all requests (supports both httpOnly cookies AND Authorization header)
+// ✅ FIX: Add Authorization header with localStorage token for OAuth/manual auth
 // Cookies are automatically sent by browser when credentials: 'include' is set
 axiosInstance.interceptors.request.use(
   config => {
-    // httpOnly cookies are automatically sent by the browser
-    // No need to manually set Authorization header
+    // Check if token exists in localStorage (OAuth or manual token storage)
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (accessToken) {
+      // Add Authorization header with Bearer token
+      config.headers.Authorization = `Bearer ${accessToken}`;
+      logger.debug('[AXIOS] Added Authorization header with localStorage token');
+    }
+    
+    // httpOnly cookies are automatically sent by the browser via withCredentials
     logger.debug('[AXIOS] Request to ' + config.url);
     return config;
   },
@@ -81,15 +89,39 @@ axiosInstance.interceptors.response.use(
         // All concurrent requests wait for the SAME refresh promise
         if (!refreshPromise) {
           logger.debug('[AXIOS] Starting token refresh...');
-          // ✅ SECURITY FIX: Refresh endpoint now uses httpOnly cookies
-          // No need to send refreshToken in body - it's in the httpOnly cookie
+          
+          // ✅ FIX: Build refresh request with both strategies
+          const refreshConfig = { 
+            withCredentials: true  // ✅ Send/receive httpOnly cookies
+          };
+          
+          // If refreshToken in localStorage (OAuth flow), add to Authorization header
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (refreshToken) {
+            refreshConfig.headers = {
+              Authorization: `Bearer ${refreshToken}`
+            };
+            logger.debug('[AXIOS] Sending refreshToken via Authorization header');
+          }
+          
           refreshPromise = axios.post(
             `${API_BASE_URL}/api/auth/refresh`,
             {},  // Empty body
-            { withCredentials: true }  // ✅ Send/receive httpOnly cookies
+            refreshConfig
           )
             .then(response => {
               logger.debug('[AXIOS] Token refresh successful');
+              
+              // ✅ If response contains tokens, update localStorage
+              if (response.data?.accessToken) {
+                localStorage.setItem('accessToken', response.data.accessToken);
+                logger.debug('[AXIOS] Updated accessToken in localStorage');
+              }
+              if (response.data?.refreshToken) {
+                localStorage.setItem('refreshToken', response.data.refreshToken);
+                logger.debug('[AXIOS] Updated refreshToken in localStorage');
+              }
+              
               return response;
             })
             .catch(err => {
@@ -105,10 +137,13 @@ axiosInstance.interceptors.response.use(
         // ✅ SECURITY: Wait for refresh to complete (same promise for all concurrent requests)
         await refreshPromise;
 
-        // ✅ SECURITY: Tokens are now in httpOnly cookies (not in response)
-        // Browser automatically handles cookie storage and sending
+        // ✅ Update Authorization header with new token from localStorage
+        const newAccessToken = localStorage.getItem('accessToken');
+        if (newAccessToken) {
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        }
         
-        // Retry original request with refreshed token (in httpOnly cookie)
+        // Retry original request with refreshed token
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         logger.error('[AXIOS] Authentication failed - redirecting to login');
