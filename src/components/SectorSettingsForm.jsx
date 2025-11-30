@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import sectorApiRequirements from '../config/sectorApiRequirements';
-import '../styles/SectorSettingsForm.css';
 
 /**
  * SectorSettingsForm - Dynamic form for sector-specific API configuration
