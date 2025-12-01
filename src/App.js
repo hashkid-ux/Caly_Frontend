@@ -25,7 +25,8 @@ const OAuthCallbackPage = lazy(() => import('./pages/OAuthCallbackPage'));
 
 // Protected Pages - Lazy Loaded
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const SettingsPage = lazy(() => import('./pages/SettingsPageNew'));  // ✅ NEW DYNAMIC SETTINGS PAGE
+const SettingsPage = lazy(() => import('./pages/SettingsPageComplete'));  // ✅ NEW COMPLETE SETTINGS PAGE
+const SettingsPageOld = lazy(() => import('./pages/SettingsPageNew'));  // Fallback
 const AgentManagementPage = lazy(() => import('./pages/AgentManagementPage'));  // ✅ NEW AGENT MANAGEMENT PAGE
 const ProviderManagementPage = lazy(() => import('./pages/ProviderManagementPage'));  // ✅ NEW PROVIDER MANAGEMENT PAGE
 const CallHistoryPage = lazy(() => import('./pages/CallHistoryPage'));
