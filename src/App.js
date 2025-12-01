@@ -25,7 +25,9 @@ const OAuthCallbackPage = lazy(() => import('./pages/OAuthCallbackPage'));
 
 // Protected Pages - Lazy Loaded
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPageNew'));  // ✅ NEW DYNAMIC SETTINGS PAGE
+const AgentManagementPage = lazy(() => import('./pages/AgentManagementPage'));  // ✅ NEW AGENT MANAGEMENT PAGE
+const ProviderManagementPage = lazy(() => import('./pages/ProviderManagementPage'));  // ✅ NEW PROVIDER MANAGEMENT PAGE
 const CallHistoryPage = lazy(() => import('./pages/CallHistoryPage'));
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
@@ -105,6 +107,30 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Agent Management Route */}
+              <Route
+                path="/agents"
+                element={
+                  <ProtectedRoute>
+                    <OnboardingGuard>
+                      <AgentManagementPage />
+                    </OnboardingGuard>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Provider Management Route */}
+              <Route
+                path="/providers"
+                element={
+                  <ProtectedRoute>
+                    <OnboardingGuard>
+                      <ProviderManagementPage />
+                    </OnboardingGuard>
                   </ProtectedRoute>
                 }
               />

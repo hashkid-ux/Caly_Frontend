@@ -1,0 +1,408 @@
+/**
+ * Settings Page Styling
+ * Dynamic, responsive, modern design
+ */
+
+.settings-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 0;
+}
+
+.settings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.settings-container h1 {
+  font-size: 2.5rem;
+  color: #1a202c;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Sector Selector Section */
+.sector-selector-section h2 {
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.sector-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.sector-btn {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #2d3748;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.sector-btn:hover {
+  border-color: #4299e1;
+  background: #edf2f7;
+  transform: translateY(-2px);
+}
+
+.sector-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* APIs Section */
+.apis-section {
+  margin-top: 3rem;
+}
+
+.apis-section h2 {
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* API Card */
+.api-card {
+  background: #f8f9fa;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.api-card:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.api-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.api-info h3 {
+  font-size: 1.2rem;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.help-text {
+  font-size: 0.9rem;
+  color: #718096;
+  margin: 0;
+  font-style: italic;
+}
+
+.api-status {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge.verified {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status-badge.pending {
+  background: #feebc8;
+  color: #7c2d12;
+}
+
+.required-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #fed7d7;
+  color: #742a2a;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Saved Credential */
+.saved-credential {
+  background: white;
+  border-left: 4px solid #48bb78;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+}
+
+.saved-credential p {
+  margin: 0 0 0.75rem 0;
+  color: #2d3748;
+}
+
+.saved-credential strong {
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.btn-reconfigure,
+.btn-delete {
+  margin-right: 0.5rem;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.btn-reconfigure {
+  background: #4299e1;
+  color: white;
+}
+
+.btn-reconfigure:hover {
+  background: #3182ce;
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  background: #f56565;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #e53e3e;
+  transform: translateY(-2px);
+}
+
+/* Credential Form Wrapper */
+.credential-form-wrapper {
+  margin-top: 1rem;
+}
+
+.btn-configure {
+  background: #48bb78;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.btn-configure:hover {
+  background: #38a169;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
+}
+
+/* Credential Form */
+.credential-form {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.form-fields {
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.required-indicator {
+  color: #f56565;
+  margin-left: 0.25rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: white;
+  color: #2d3748;
+  transition: all 0.2s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: white;
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+}
+
+.form-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: 0.25rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-test,
+.btn-save {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-test {
+  background: #ed8936;
+  color: white;
+}
+
+.btn-test:hover:not(:disabled) {
+  background: #dd6b20;
+  transform: translateY(-2px);
+}
+
+.btn-save {
+  background: #4299e1;
+  color: white;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #3182ce;
+  transform: translateY(-2px);
+}
+
+.btn-test:disabled,
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+  font-size: 1.1rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  background: #edf2f7;
+  border-radius: 8px;
+  color: #718096;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 1rem;
+  }
+
+  .settings-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sector-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .api-header {
+    flex-direction: column;
+  }
+
+  .api-status {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-test,
+  .btn-save {
+    width: 100%;
+  }
+
+  .credential-form {
+    padding: 1rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
